@@ -1,0 +1,10 @@
+{
+   "Frenzy Boar": {
+        "drops": ["Boar Hide", "Coarse Stone"],
+		"maps": ["Origin Plains", "Quest Plains", "1F Labyrinth"]
+   },
+   "Stabbing Wasp": {
+        "drops": ["Pointed Stinger", "Coarse Stone"],
+		"maps": ["Origin Plains", "Rivalry Plains", "1F Labyrinth"]
+   }
+}
