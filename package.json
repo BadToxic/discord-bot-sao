@@ -3,13 +3,14 @@
   "version": "0.0.1",
   "description": "Sword Art Online Integral Factor Bot for Discord",
   "engines": {
-    "node": "8.9.1"
+    "node": "8.9.1",
+    "npm": "*"
   },
   "main": "bot.js",
   "author": "BadToxic",
   "scripts": {
     "start": "node bot.js",
-    "test": "node test.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "ejs": "^2.5.6",
@@ -24,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/BadToxic/discord-bot-sao.git"
+    "url": "git+https://gitlab.com/BadToxic/discord-bot-sao.git"
   },
   "keywords": [
     "node",
