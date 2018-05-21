@@ -1,18 +1,22 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.3.0",
-  "description": "A sample Node.js app using Express 4",
+  "name": "sao-if-bot",
+  "version": "0.0.1",
+  "description": "Sword Art Online Integral Factor Bot for Discord",
   "engines": {
     "node": "8.9.1"
   },
-  "main": "index.js",
+  "main": "bot.js",
+  "author": "BadToxic",
   "scripts": {
-    "start": "node index.js",
+    "start": "node bot.js",
     "test": "node test.js"
   },
   "dependencies": {
     "ejs": "^2.5.6",
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "discord.io": "github:woor/discord.io#gateway_v6",
+    "discord.js": "^11.3.2",
+    "winston": "^2.4.2"
   },
   "devDependencies": {
     "request": "^2.81.0",
@@ -20,12 +24,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
+    "url": "https://gitlab.com/BadToxic/discord-bot-sao.git"
   },
   "keywords": [
     "node",
     "heroku",
-    "express"
-  ],
-  "license": "MIT"
+    "express",
+	"sao",
+	"discord"
+  ]
 }
