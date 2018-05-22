@@ -6,5 +6,26 @@
    "Stabbing Wasp": {
         "drops": ["Pointed Stinger", "Coarse Stone"],
 		"maps": ["Origin Plains", "Rivalry Plains", "1F Labyrinth"]
+   },
+   "Dire Wolf": {
+        "drops": ["Wolf Claw", "Coarse Stone"],
+		"maps": ["Quest Plains", "Rivalry Plains", "1F Labyrinth"]
+   },
+   "Recover Flower – Blue": {
+        "drops": [],
+		"maps": ["1F Labyrinth"]
+   },
+   "Kobold Henchman": {
+        "drops": ["Small Metal Piece", "Coarse Stone"],
+		"maps": ["Quest Plains", "1F Labyrinth"]
+   },
+   "Little Nepenthes": {
+        "drops": ["Coarse Stone", "Red Fruit"],
+		"maps": ["Rivalry Plains"]
+   },
+   "Illfang The Kobold Lord": {
+        "drops": ["Refining Hammer", "Record Kit S", "Record Kit M", "Jewel", "Stone", "King’s Fang", "King’s Ear"],
+		"maps": ["1F Labyrinth"],
+		"isBoss": true
    }
 }

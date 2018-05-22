@@ -4,6 +4,7 @@ let logger = require('winston');
 let auth = require('./auth.json');
 
 let mobs = require('./data/mobs.json');
+let items = require('./data/items.json');
 
 let help = 
 'Notice: When using a command do not include "<" and ">".\n' +
@@ -13,7 +14,11 @@ let help =
 
 '***Ask information***\n' +
 '**sao mob**  |  Lists all mobs currently registered\n' +
-'**sao mob** <Mob name>  |  Shows the information about this mob (drops & locations)';
+'**sao mob** <Mob name>  |  Shows the information about this mob (drops & locations)\n' +
+'**sao boss**  |  Lists all bosses currently registered\n' +
+'**sao boss** <Boss name>  |  Shows the information about this boss (drops & locations)\n' +
+'**sao item**  |  Lists all items currently registered\n' +
+'**sao item** <Item name>  |  Shows the information about this item (dropping monsters)';
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -35,16 +40,114 @@ bot.on('ready', (evt) => {
 });
 
 
-// login to Discord with your app's token
+// Login to Discord with your app's token
 bot.login(auth.token);
 
 
 send = (message, answer, options) => {
 	message.channel.send(answer, options);
-    /*bot.sendMessage({
-		to: channelID,
-		message: answer
-	});*/
+};
+
+getBosses = () => {
+	let bosses = {};
+	for (let mobName in mobs) {
+		if (mobs.hasOwnProperty(mobName)) {
+			let mob = mobs[mobName];
+			if (mob['isBoss']) {
+				bosses[mobName] = mob;
+			}
+		}
+	}
+	return bosses;
+};
+
+getMobsWithItem = (itemName) => {
+	let mobsWithItem = {};
+	let foundMobs = false;
+	for (let mobName in mobs) {
+		if (mobs.hasOwnProperty(mobName)) {
+			let mob = mobs[mobName];
+			if (mob['drops'].indexOf(itemName) != -1) {
+				mobsWithItem[mobName] = mob;
+				foundMobs = true;
+			}
+		}
+	}
+	return foundMobs ? mobsWithItem : undefined;
+};
+
+getRandomFile = (folder) => {
+	let fs = require('fs');
+	let files = fs.readdirSync(folder);
+	return folder + files[Math.floor(Math.random() * files.length)];
+};
+
+// Command handlers
+handleCmdMob = (message, boss) => {
+    let args = message.content.substring(4).split(' ');
+	let mobName = args.splice(1, args.length - 1).join(' ');
+	let answer;
+	let options;
+	let mobsToCheck = boss ? getBosses() : mobs;
+	logger.info('handleCmdMob for (boss only: ' + boss + ') ' + mobName);
+	if (mobName === '') {
+		answer = 'List of all registered ' + (boss ? 'bosses' : 'monsters') + ':\n***' + Object.keys(mobsToCheck).join('***, ***') + '***'
+	} else {
+		let mob = mobsToCheck[mobName];
+		if (mob === undefined) {
+			answer = (boss ? 'Boss' : 'Monster')  + ' ***' + mobName + '*** is unknown. Did you write it correctly?';
+		} else {
+			answer = '**' + mobName + '** drops: ***' + mob.drops.join('***, ***') + '***\n' +
+							  'and can be found at: ***' + mob.maps.join('***, ***') + '***';
+			options = {
+				files: [
+					'./img/mobs/' + mobName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
+				]
+			}
+		}
+	}
+	send(message, answer, options);
+};
+
+handleCmdItem = (message) => {
+    let args = message.content.substring(4).split(' ');
+	let itemName = args.splice(1, args.length - 1).join(' ');
+	let answer;
+	let options;
+	logger.info('handleCmdItem for ' + itemName);
+	if (itemName === '') {
+		answer = 'List of all registered items:\n***' + Object.keys(items).join('***, ***') + '***'
+	} else {
+		let mobsWithItem = getMobsWithItem(itemName);
+		if (mobsWithItem === undefined) {
+			answer = 'Item ***' + itemName + '*** is unknown. Did you write it correctly?';
+		} else {
+			answer = '**' + itemName + '** is droped by: ***' + Object.keys(mobsWithItem).join('***, ***') + '***';
+			/*options = {
+				files: [
+					'./img/items/' + itemName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
+				]
+			}*/
+		}
+	}
+	send(message, answer, options);
+};
+
+sendRandomFile = (message, folder) => {
+	options = {
+		files: [
+			getRandomFile(folder)
+		]
+	}
+    logger.info('Random file from ' + folder + ' -> ' + options.files[0]);
+	send(message, '', options);
+};
+
+handleCmdMeme = (message) => {
+	sendRandomFile(message, './img/memes/');
+};
+handleCmdGirl = (message) => {
+	sendRandomFile(message, './img/girls/');
 };
 
 bot.on('message', message => {
@@ -80,24 +183,26 @@ bot.on('message', message => {
             case 'mobs':
             case 'monster':
             case 'monsters':
-				let mobName = args.splice(1, 2).join(' ');
-				let answer;
-				let options;
-                logger.info(mobName);
-				if (mobName === '') {
-					answer = 'List of all registered monsters:\n***' + Object.keys(mobs).join('***, ***') + '***'
-				} else {
-				    let mob = mobs[mobName];
-					answer = '**' + mobName + '** drops: ***' + mob.drops.join('***, ***') + '***\n' +
-					                  'and can be found at: ***' + mob.maps.join('***, ***') + '***';
-					options = {
-						files: [
-							'./img/mobs/' + mobName.toLowerCase().replace(' - ', '-').replace(' ', '-') + '.jpg'
-						]
-					}
-				}
-				send(message, answer, options);
+				handleCmdMob(message, false);
 				break;
+            case 'boss':
+				handleCmdMob(message, true);
+				break;
+            case 'item':
+            case 'drop':
+            case 'drops':
+				handleCmdItem(message);
+				break;
+            case 'meme':
+            case 'memes':
+				handleCmdMeme(message);
+				break;
+            case 'girl':
+            case 'girls':
+				handleCmdGirl(message);
+				break;
+			default:
+				send(message, 'Sorry, I don\'t know the command ***' + cmd + '***.\nType *sao help* for a list of the available commands.');
          }
      }
 });
