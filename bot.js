@@ -1,4 +1,5 @@
-let Discord = require('discord.io');
+// let Discord = require('discord.io');
+let Discord = require('discord.js');
 let logger = require('winston');
 let auth = require('./auth.json');
 
@@ -23,66 +24,79 @@ logger.add(logger.transports.Console, {
 logger.level = 'debug';
 
 // Initialize Discord Bot
-let bot = new Discord.Client({
+let bot = new Discord.Client(/*{
    token: auth.token,
    autorun: true
-});
-bot.on('ready', function (evt) {
+}*/);
+bot.on('ready', (evt) => {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
-send = function (channelID, message) {
-    bot.sendMessage({
+
+
+// login to Discord with your app's token
+bot.login(auth.token);
+
+
+send = (message, answer, options) => {
+	message.channel.send(answer, options);
+    /*bot.sendMessage({
 		to: channelID,
-		message: message
-	});
+		message: answer
+	});*/
 };
 
-bot.on('message', function (user, userID, channelID, message, evt) {
+bot.on('message', message => {
 	
-	// message = message.toLowerCase();
+	// message.content = message.content.toLowerCase();
 	
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
-    if (message.substring(0, 1) === '!') {
-        let args = message.substring(1).split(' ');
+    if (message.content.substring(0, 1) === '!') {
+        let args = message.content.substring(1).split(' ');
         let cmd = args[0];
        
         switch(cmd) {
             case 'ping':
-				send(channelID, 'Pong!');
+				send(message, 'Pong!');
 				break;
          }
-     } else if (message.substring(0, 3) === 'sao') {
-        let args = message.substring(4).split(' ');
+     } else if (message.content.substring(0, 3) === 'sao') {
+        let args = message.content.substring(4).split(' ');
         logger.info(args);
         let cmd = args[0];
        
         // args = args.splice(1);
         switch(cmd) {
             case 'ping':
-				send(channelID, 'Pong!');
+				send(message, 'Pong!');
 				break;
             case 'h':
             case 'help':
-				send(channelID, help);
+				send(message, help);
 				break;
             case 'mob':
             case 'mobs':
             case 'monster':
             case 'monsters':
 				let mobName = args.splice(1, 2).join(' ');
-				let message;
+				let answer;
+				let options;
                 logger.info(mobName);
 				if (mobName === '') {
-					message = 'List of all registered monsters:\n***' + Object.keys(mobs).join('***, ***') + '***'
+					answer = 'List of all registered monsters:\n***' + Object.keys(mobs).join('***, ***') + '***'
 				} else {
 				    let mob = mobs[mobName];
-					message = '**' + mobName + '** drops: ***' + mob.drops.join('***, ***') + '***\n' +
+					answer = '**' + mobName + '** drops: ***' + mob.drops.join('***, ***') + '***\n' +
 					                  'and can be found at: ***' + mob.maps.join('***, ***') + '***';
+					options = {
+						files: [
+							'./img/mobs/' + mobName.toLowerCase().replace(' - ', '-').replace(' ', '-') + '.jpg'
+						]
+					}
 				}
-				send(channelID, message);
+				send(message, answer, options);
 				break;
          }
      }
