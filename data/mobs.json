@@ -195,14 +195,47 @@
 		"maps": ["4F Labyrinth"],
 		"isBoss": true,
 		"floors": [4]
+   },
+   "Moldy Mummy": {
+        "drops": ["Bloodied Cloth", "Waste Fragment"],
+		"maps": ["Decaying Ruins"],
+		"floors": [5]
+   },
+   "Aqua Slime": {
+        "drops": ["Teary Mucus", "Waste Fragment"],
+		"maps": ["Decaying Ruins", "5F Labyrinth"],
+		"floors": [5]
+   },
+   "Crumble Orc": {
+        "drops": ["Rotten Nose", "Waste Fragment"],
+		"maps": ["Decaying Ruins", "Tower Ruins"],
+		"floors": [5]
+   },
+   "Recover Flower – Violet": {
+        "drops": [],
+		"effects": ["Recover 300HP"],
+		"maps": ["Decaying Ruins", "Tower Ruins", "5F Labyrinth"],
+		"floors": [5]
+   },
+   "Humid Mummy": {
+        "drops": ["Wet Fabric", "Waste Fragment"],
+		"maps": ["Tower Ruins", "5F Labyrinth"],
+		"floors": [5]
+   },
+   "Mournful Wraith": {
+        "drops": ["Ghost Hair", "Waste Fragment"],
+		"maps": ["Tower Ruins", "5F Labyrinth"],
+		"floors": [5]
+   },
+   "Sly Shrewman": {
+        "drops": ["Waste Fragment"],
+		"maps": ["5F Labyrinth"],
+		"floors": [5]
+   },
+   "Fuscus The Vacant Colossus": {
+        "drops": ["Refining Hammer", "Jewel", "Stone", "False Statue Stone", "False Statue Crest"],
+		"maps": ["5F Labyrinth"],
+		"isBoss": true,
+		"floors": [5]
    }
 }
-
-
-
-
-
-
-
-
-
