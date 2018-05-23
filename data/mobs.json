@@ -1,31 +1,150 @@
 {
    "Frenzy Boar": {
         "drops": ["Boar Hide", "Coarse Stone"],
-		"maps": ["Origin Plains", "Quest Plains", "1F Labyrinth"]
+		"maps": ["Origin Plains", "Quest Plains", "1F Labyrinth"],
+		"floors": [1]
    },
    "Stabbing Wasp": {
         "drops": ["Pointed Stinger", "Coarse Stone"],
-		"maps": ["Origin Plains", "Rivalry Plains", "1F Labyrinth"]
+		"maps": ["Origin Plains", "Rivalry Plains", "1F Labyrinth"],
+		"floors": [1]
    },
    "Dire Wolf": {
         "drops": ["Wolf Claw", "Coarse Stone"],
-		"maps": ["Quest Plains", "Rivalry Plains", "1F Labyrinth"]
+		"maps": ["Quest Plains", "Rivalry Plains", "1F Labyrinth"],
+		"floors": [1]
    },
    "Recover Flower – Blue": {
         "drops": [],
-		"maps": ["1F Labyrinth"]
+		"effects": ["Recover HP"],
+		"maps": ["1F Labyrinth"],
+		"floors": [1]
    },
    "Kobold Henchman": {
         "drops": ["Small Metal Piece", "Coarse Stone"],
-		"maps": ["Quest Plains", "1F Labyrinth"]
+		"maps": ["Quest Plains", "1F Labyrinth"],
+		"floors": [1]
    },
    "Little Nepenthes": {
         "drops": ["Coarse Stone", "Red Fruit"],
-		"maps": ["Rivalry Plains"]
+		"maps": ["Rivalry Plains"],
+		"floors": [1]
    },
    "Illfang The Kobold Lord": {
         "drops": ["Refining Hammer", "Record Kit S", "Record Kit M", "Jewel", "Stone", "King’s Fang", "King’s Ear"],
 		"maps": ["1F Labyrinth"],
-		"isBoss": true
+		"isBoss": true,
+		"floors": [1]
+   },
+   "Wind Wasp": {
+        "drops": ["Poisonous Stinger", "Dried Hay"],
+		"maps": ["Grotto Plains"],
+		"floors": [2]
+   },
+   "Onrushing Cow": {
+        "drops": ["Cow Hide", "Dried Hay"],
+		"maps": ["Parched Plains", "Grotto Plains"],
+		"floors": [2]
+   },
+   "Glaring Shrewman": {
+        "drops": ["Chipped Tooth", "Dried Hay"],
+		"maps": ["Parched Plains"],
+		"floors": [2]
+   },
+   "Trembling Cow": {
+        "drops": ["Coarse Cow Hide", "Dried Hay"],
+		"maps": ["Parched Plains", "Grotto Plains"],
+		"floors": [2]
+   },
+   "Trembling Ox": {
+        "drops": ["Ox Horn", "Dried Hay"],
+		"maps": ["Parched Plains"],
+		"floors": [2]
+   },
+   "Recovery Flower – Yellow": {
+        "drops": [],
+		"effects": ["Recover 50HP"],
+		"maps": ["Grotto Plains", "2F Labyrinth"],
+		"floors": [2]
+   },
+   "Horror Bats": {
+        "drops": ["Blood Sucking Fangs", "Dried Hay"],
+		"maps": ["2F Labyrinth"],
+		"floors": [2]
+   },
+   "Lesser Taurus Striker": {
+        "drops": ["Dried Hay"],
+		"maps": ["2F Labyrinth"],
+		"floors": [2]
+   },
+   "Lesser Taurus Swordman": {
+        "drops": ["Dried Hay"],
+		"maps": ["2F Labyrinth"],
+		"floors": [2]
+   },
+   "Keenfin Tadpole": {
+        "drops": [],
+		"maps": ["2F Labyrinth"],
+		"floors": [2]
+   },
+   "Nato the Colonel Taurus": {
+        "drops": [],
+		"maps": ["2F Labyrinth"],
+		"isBoss": true,
+		"floors": [2]
+   },
+   "Baran the General Taurus": {
+        "drops": [],
+		"maps": ["2F Labyrinth"],
+		"isBoss": true,
+		"floors": [2]
+   },
+   "Asterios the Taurus King": {
+        "drops": ["Record Kit S", "Jewel", "Stone", "Thunder Bull Beard", "Thunder Bull Horn"],
+		"maps": ["2F Labyrinth"],
+		"isBoss": true,
+		"floors": [2]
+   },
+   "Magma Boar": {
+        "drops": ["Hard Pelt", "Wet Leaf"],
+		"maps": ["W. Mists Entrance", "3F Labyrinth"],
+		"floors": [3]
+   },
+   "Thicket Spider": {
+        "drops": ["Spider Silk", "Wet Leaf"],
+		"maps": ["W. Mists Entrance"],
+		"floors": [3]
+   },
+   "Elder Treant": {
+        "drops": ["Treant Splinter", "Wet Leaf"],
+		"maps": ["W. Mists Entrance", "W. Mists Pathway"],
+		"floors": [3]
+   },
+   "Land Spider": {
+        "drops": ["Light Shell", "Wet Leaf"],
+		"maps": ["W. Mists Pathway", "3F Labyrinth"],
+		"floors": [3]
+   },
+   "Malicious Shrewman": {
+        "drops": ["Curved Tail", "Wet Leaf"],
+		"maps": ["W. Mists Pathway", "3F Labyrinth"],
+		"floors": [3]
+   },
+   "Recover Mush – Green": {
+        "drops": [],
+		"effects": ["Recover HP"],
+		"maps": ["3F Labyrinth"],
+		"floors": [3]
+   },
+   "Rusty Golem": {
+        "drops": ["Wet Leaf"],
+		"maps": ["3F Labyrinth"],
+		"floors": [3]
+   },
+   "Nerius the Evil Treant": {
+        "drops": ["Refining Hammer", "Jewel", "Stone", "Spirit Tea Leaf", "Spirit Tree Branch"],
+		"maps": ["3F Labyrinth"],
+		"isBoss": true,
+		"floors": [3]
    }
 }
