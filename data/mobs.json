@@ -141,7 +141,7 @@
 		"maps": ["3F Labyrinth"],
 		"floors": [3]
    },
-   "Nerius the Evil Treant": {
+   "Nerius The Evil Treant": {
         "drops": ["Refining Hammer", "Jewel", "Stone", "Spirit Tea Leaf", "Spirit Tree Branch"],
 		"maps": ["3F Labyrinth"],
 		"isBoss": true,
