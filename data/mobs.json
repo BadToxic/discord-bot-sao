@@ -146,5 +146,63 @@
 		"maps": ["3F Labyrinth"],
 		"isBoss": true,
 		"floors": [3]
+   },
+   "Scuttle Crab": {
+        "drops": ["Crab Pincers", "Clean Water"],
+		"maps": ["Lake of Trials"],
+		"floors": [4]
+   },
+   "Kobold Soldier": {
+        "drops": ["Crushed Iron Plate", "Clean Water"],
+		"maps": ["Lake of Trials"],
+		"floors": [4]
+   },
+   "Dorsalfin Tadpole": {
+        "drops": ["Tadpole Gilss", "Clean Water"],
+		"maps": ["Lake of Trials", "Border Lake"],
+		"floors": [4]
+   },
+   "Recover Mush – Blue": {
+        "drops": [],
+		"effects": ["Recover 200HP"],
+		"maps": ["Lake of Trials", "Border Lake"],
+		"floors": [4]
+   },
+   "Middle Treant": {
+        "drops": ["Hard Branch", "Clean Water"],
+		"maps": ["Border Lake", "Dungeon – Bear Woods"],
+		"floors": [4]
+   },
+   "Mauve Bat": {
+        "drops": ["Bloodsucking Fang", "Clean Water"],
+        "dungeonDrops": ["Jewel", "Refining Hammer", "Stone"],
+		"maps": ["Border Lake", "Dungeon – Bear Woods"],
+		"floors": [4]
+   },
+   "Fussy Crab": {
+        "drops": ["Jewel", "Refining Hammer", "Stone"],
+		"maps": ["Dungeon – Bear Woods"],
+		"floors": [4]
+   },
+   "Magnatherium": {
+        "drops": ["Blue Fruit"],
+		"maps": ["Dungeon – Bear Woods"],
+		"isBoss": true,
+		"floors": [4]
+   },
+   "Wythege The Hippocampus": {
+        "drops": ["Refining Hammer", "Jewel", "Stone", "Sea Horse Hoof", "Sea Horse Fin"],
+		"maps": ["4F Labyrinth"],
+		"isBoss": true,
+		"floors": [4]
    }
 }
+
+
+
+
+
+
+
+
+
