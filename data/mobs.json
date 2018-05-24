@@ -237,5 +237,47 @@
 		"maps": ["5F Labyrinth"],
 		"isBoss": true,
 		"floors": [5]
+   },
+   "Pointed Beak": {
+        "drops": ["Colourful Feather", "Moist Moss"],
+		"maps": ["Lyrical Wetland", "Silent Wetland"],
+		"floors": [6]
+   },
+   "Predator Fish": {
+        "drops": ["Sandy Fish Scale"],
+		"maps": ["Lyrical Wetland"],
+		"floors": [6]
+   },
+   "Quaint Toad": {
+        "drops": ["Toad's Cartilage", "Moist Moss"],
+		"maps": ["Lyrical Wetland", "6F Labyrinth"],
+		"floors": [6]
+   },
+   "Giant Sickle": {
+        "drops": ["Deep Sharp Claw", "Moist Moss"],
+		"maps": ["Silent Wetland"],
+		"floors": [6]
+   },
+   "Scream Fish": {
+        "drops": ["Sharp Fin", "Moist Moss"],
+		"maps": ["Silent Wetland"],
+		"floors": [6]
+   },
+   "Recover Mush – Red": {
+        "drops": [],
+		"effects": ["Recover 400HP"],
+		"maps": ["Lyrical Wetland", "Silent Wetland", "6F Labyrinth"],
+		"floors": [6]
+   },
+   "Boiling Crab": {
+        "drops": ["Crab’s Shell", "Moist Moss"],
+		"maps": ["6F Labyrinth"],
+		"floors": [6]
+   },
+   "Pierce The Rogue Manticore": {
+        "drops": ["Record Kit M", "High Jewel", "Jewel", "Stone", "Beast’s Tail", "Beast’s Mane"],
+		"maps": ["6F Labyrinth"],
+		"isBoss": true,
+		"floors": [6]
    }
 }
