@@ -31,7 +31,7 @@
 		"floors": [1]
    },
    "Illfang The Kobold Lord": {
-        "drops": ["Refining Hammer", "Record Kit S", "Record Kit M", "Jewel", "Stone", "King’s Fang", "King’s Ear"],
+        "drops": ["Refining Hammer", "Record Kit S", "Record Kit M", "Jewel", "Stone", "King's Fang", "King's Ear"],
 		"maps": ["1F Labyrinth"],
 		"isBoss": true,
 		"floors": [1]
@@ -174,7 +174,7 @@
 		"floors": [4]
    },
    "Mauve Bat": {
-        "drops": ["Bloodsucking Fang", "Clean Water"],
+        "drops": ["Blooducking Fang", "Clean Water"],
         "dungeonDrops": ["Jewel", "Refining Hammer", "Stone"],
 		"maps": ["Border Lake", "Dungeon – Bear Woods"],
 		"floors": [4]
@@ -270,14 +270,97 @@
 		"floors": [6]
    },
    "Boiling Crab": {
-        "drops": ["Crab’s Shell", "Moist Moss"],
+        "drops": ["Crab's Shell", "Moist Moss"],
 		"maps": ["6F Labyrinth"],
 		"floors": [6]
    },
    "Pierce The Rogue Manticore": {
-        "drops": ["Record Kit M", "High Jewel", "Jewel", "Stone", "Beast’s Tail", "Beast’s Mane"],
+        "drops": ["Record Kit M", "High Jewel", "Jewel", "Stone", "Beast's Tail", "Beast's Mane"],
 		"maps": ["6F Labyrinth"],
 		"isBoss": true,
 		"floors": [6]
+   },
+   "Biting Kapiyva": {
+        "drops": ["Stiff Fur", "Fruit Of Distorted Tree", "Glare Stone", "Record Frame S"],
+		"maps": ["Raindropping Woods"],
+		"floors": [7]
+   },
+   "Big Horn Billy Goat": {
+        "drops": ["Stiff Fur", "Fruit Of Distorted Tree", "Red Fruit", "Glare Stone", "Record Frame S"],
+		"maps": ["Raindropping Woods"],
+		"floors": [7]
+   },
+   "Big Horn Billy Goat (Medium Size)": {
+        "drops": ["Hard Hoof", "Fruit Of Distorted Tree", "Record Frame S"],
+		"maps": ["Raindropping Woods", "Withering Woods"],
+		"floors": [7]
+   },
+   "Big Horn Billy Goat (Large Size)": {
+        "drops": ["Hard Hoof", "Fruit Of Distorted Tree", "Jewel", "Record Frame S"],
+		"maps": ["Withering Woods"],
+		"floors": [7]
+   },
+   "Ground Shell": {
+        "drops": ["Spiky Shell", "Fruit Of Distorted Tree", "Red Fruit"],
+		"maps": ["Raindropping Woods"],
+		"floors": [7]
+   },
+   "Ground Shell (Medium Size)": {
+        "drops": ["Spiky Shell", "Fruit Of Distorted Tree", "Red Jewel"],
+		"maps": ["Raindropping Woods", "7F Labyrinth"],
+		"floors": [7]
+   },
+   "Recover Mush – Yellow": {
+        "drops": [],
+		"effects": ["Recover 500HP"],
+		"maps": ["Raindropping Woods", "Withering Woods"],
+		"floors": [7]
+   },
+   "Blueness Kapiyva": {
+        "drops": ["Kapiyva's Fang", "Record Frame S"],
+		"maps": ["Withering Woods", "7F Labyrinth"],
+		"floors": [7]
+   },
+   "Blueness Kapiyva (Medium Size)": {
+        "drops": ["Kapiyva's Fang", "Jewel"],
+		"maps": ["Withering Woods"],
+		"floors": [7]
+   },
+   "Killer Mush": {
+        "drops": ["Poisonous Spore", "Fruit Of Distorted Tree", "Red Fruit", "Record Frame S", "Stone"],
+		"maps": ["Withering Woods", "Old Labyrinth"],
+		"floors": [7]
+   },
+   "Killer Mush (Large Size)": {
+        "drops": ["Poisonous Spore", "Fruit Of Distorted Tree", "Record Frame S"],
+		"maps": ["Withering Woods"],
+		"floors": [7]
+   },
+   "Sharkfin Tadpole": {
+        "drops": ["Fruit Of Distorted Tree"],
+		"maps": ["Old Labyrinth", "Bulletin Board – Green Fairy's on a diet"],
+		"floors": [7]
+   },
+   "Sharkfin Tadpole (Large Size)": {
+        "drops": ["Jewel", "High Jewel"],
+		"maps": ["Bulletin Board – Green Fairy's on a diet"],
+		"floors": [7]
+   },
+   "Violet Billy Goat": {
+        "drops": ["Fruit Of Distorted Tree", "Stone", "Refining Hammer"],
+		"maps": ["Old Labyrinth", "7F Labyrinth"],
+		"floors": [7]
+   },
+   "Blood Chain Fenrir": {
+        "drops": ["Red Fruit"],
+		"maps": ["Old Labyrinth"],
+		"isBoss": true,
+		"floors": [7]
+   },
+   "Thor The Annoying Troll": {
+        "drops": ["Jewel", "Stone" , "Fang From Colossal", "Sturdy Bones From Colossal"],
+		"maps": ["7F Labyrinth"],
+		"isBoss": true,
+		"floors": [7]
    }
 }
