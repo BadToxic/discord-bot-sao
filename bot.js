@@ -215,7 +215,7 @@ handleCmdPlayer = (message) => {
 	} else {
 		let answer;
 		let options;
-		let fileName = 'data/players/' + playerName + '.json';
+		let fileName = 'data/players/' + playerName.toLowerCase() + '.json';
 		loadJSON(fileName, (player) => {
 			logger.info('player info ' + playerName);
 			logger.info(player);
