@@ -2,6 +2,9 @@
 let Discord = require('discord.js');
 let logger = require('winston');
 let auth = require('./auth.json');
+let fs = require("fs");
+// let XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+// let $ = require('jquery');
 
 let mobs = require('./data/mobs.json');
 let items = require('./data/items.json');
@@ -21,7 +24,11 @@ let help =
 '**sao item**  |  Lists all items currently registered\n' +
 '**sao item** <Item name>  |  Shows the information about this item (dropping monsters)\n' +
 '**sao map**  |  Lists all maps currently registered\n' +
-'**sao map** <Map name>  |  Shows the information about this map (monsters, NPCs & portals)';
+'**sao map** <Map name>  |  Shows the information about this map (monsters, NPCs & portals)\n' +
+'**sao info** <Username>  |  Asks for information about this user\n' +
+'**sao set** <attribute> <value>  |  Sets the value for my own attribute';
+
+let availablePlayerAttributes = ['id'];
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -100,6 +107,54 @@ getRandomFile = (folder) => {
 	return folder + files[Math.floor(Math.random() * files.length)];
 };
 
+/*loadJSONxhr = (path, onSuccess, onError) => {
+    let xhr = new XMLHttpRequest();
+	logger.info('loadJSONxhr: ' + path);
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) { // 4: DONE
+			// logger.info('DONE status: ' + xhr.status);
+            if (xhr.status === 200) {
+                if (onSuccess) {
+                    onSuccess(JSON.parse(xhr.responseText));
+				}
+            } else if (onError) {
+				onError(xhr);
+            }
+        }
+    };
+    xhr.open("GET", path, true);
+    xhr.send();
+};*/
+saveJSON = (path, jsonObj, onSuccess, onError) => {
+	logger.info('saveJSON: ' + path);
+	
+	fs.writeFile(path, JSON.stringify(jsonObj), (err) => {
+		if (err) {
+			logger.info('saveJSON: could not write file ' + path);
+			if (onError) {
+				onError();
+			}
+			return;
+		};
+		if (onSuccess) {
+			onSuccess();
+		}
+	});
+};
+loadJSON = (path, onSuccess, onError) => {
+	logger.info('loadJSON: ' + path);
+	fs.exists(path, (exists) => {
+		if (exists) {
+			let contents = fs.readFileSync(path);
+			if (onSuccess) {
+				onSuccess(JSON.parse(contents));
+			}
+		} else if (onError) {
+			onError();
+		}
+	});
+};
+
 // Command handlers
 handleCmdMob = (message, boss) => {
     let args = message.content.substring(4).split(' ');
@@ -149,6 +204,74 @@ handleCmdItem = (message) => {
 		}
 	}
 	send(message, answer, options);
+};
+
+handleCmdPlayer = (message) => {
+    let args = message.content.substring(4).split(' ');
+	let playerName = args.splice(1, args.length - 1).join(' ');
+	logger.info('handleCmdPlayer for ' + playerName);
+	if (playerName === '') {
+		// answer = 'List of all registered playerName:\n***' + Object.keys(maps).join('***, ***') + '***' // TODO
+	} else {
+		let answer;
+		let options;
+		let fileName = 'data/players/' + playerName + '.json';
+		loadJSON(fileName, (player) => {
+			logger.info('player info ' + playerName);
+			logger.info(player);
+			answer = '**' + playerName + '**:\n ID: ' + player.id;
+			send(message, answer, options);
+		}, () => {
+			logger.info('handleCmdPlayer error loading file ' + fileName);
+			// logger.info(xhr);
+			answer = 'Player ***' + playerName + '*** is unknown. Did you write him correctly?';
+			send(message, answer, options);
+		});
+	}
+};
+
+handleCmdSet = (message) => {
+    let args = message.content.substring(4).split(' ');
+	let attributeName = args[1];
+	let attributeValue = args[2];
+	let playerName = message.author.username;
+	logger.info('handleCmdSet ' + attributeName + '  = ' + attributeValue + ' for user ' + playerName);
+	if (attributeName === undefined) {
+		answer = 'What attribute value do you want to set? Use ***sao set <attribute> <value>***';
+	} else if (availablePlayerAttributes.indexOf(attributeName) === -1) {
+		answer = 'You are not allowed to set the attribute ***' + attributeName + '***';
+	} else if (attributeValue === undefined) {
+		answer = 'A value is needed. Use ***sao set <attribute> <value>***';
+	} else {
+		let answer;
+		let fileName = 'data/players/' + playerName.toLowerCase() + '.json';
+		let setAttribute = (player) => {
+			player[attributeName] = attributeValue;
+			saveJSON(fileName, player, () => {
+				answer = 'Successfully set ' + attributeName + '  = ' + attributeValue + ' for ' + playerName;
+				send(message, answer);
+			}, () => {
+				answer = 'Sorry ' + playerName + ', I failed to set ' + attributeName + '  = ' + attributeValue;
+				send(message, answer);
+			});
+		};
+		loadJSON(fileName, (player) => {
+			logger.info('player info ' + playerName);
+			logger.info(player);
+			setAttribute(player);
+			
+			// answer = '**' + playerName + '**:\n ID: ' + player.id;
+			// send(message, answer, options);
+		}, () => {
+			logger.info('handleCmdSet file doesn\'t exist yet: ' + fileName);
+			setAttribute({});
+			
+			// answer = 'Player ***' + playerName + '*** is unknown. Did you write him correctly?';
+			// send(message, answer, options);
+		});
+		return;
+	}
+	send(message, answer);
 };
 
 handleCmdMap = (message) => {
@@ -226,6 +349,14 @@ bot.on('message', message => {
             case 'h':
             case 'help':
 				send(message, help);
+				break;
+            case 'player':
+            case 'players':
+            case 'info':
+				handleCmdPlayer(message);
+				break;
+            case 'set':
+				handleCmdSet(message);
 				break;
             case 'mob':
             case 'mobs':
