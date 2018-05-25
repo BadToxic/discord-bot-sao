@@ -1,0 +1,25 @@
+{
+   "Quest Plains": {
+		"mobs": ["Frenzy Boar", "Dire Wolf", "Kobold Henchman"],
+		"npcs": ["Merchant", "Workshop", "Blacksmith", "Teleport Monument", "Labyrinth Guide (1F)"],
+		"portals": ["Central Tolbana", "Origin Plains"]
+   },
+   "Central Tolbana": {},
+   "Origin Plains": {},
+   "Rivalry Plains": {},
+   "Teleport Gate Plaza": {
+		"mobs": [],
+		"npcs": ["Troubled Woman", "Story Replay", "Sachi", "Miyurin", "Ulrik", "Teleport Monument"],
+		"portals": ["Merchant District", "Blackiron Palace"]
+   },
+   "Merchant District": {
+		"mobs": [],
+		"npcs": ["Merchant", "Workshop", "Trader", "Blacksmith", "Bulletin Board", "Argo"],
+		"portals": ["Teleport Gate Plaza"]
+   },
+   "Blackiron Palace": {
+		"mobs": [],
+		"npcs": ["Tower Quest", "Hunting Event", "Lively Female Player"],
+		"portals": ["Teleport Gate Plaza"]
+	}
+}

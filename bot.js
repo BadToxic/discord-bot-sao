@@ -5,6 +5,7 @@ let auth = require('./auth.json');
 
 let mobs = require('./data/mobs.json');
 let items = require('./data/items.json');
+let maps = require('./data/maps.json');
 
 let help = 
 'Notice: When using a command do not include "<" and ">".\n' +
@@ -18,7 +19,9 @@ let help =
 '**sao boss**  |  Lists all bosses currently registered\n' +
 '**sao boss** <Boss name>  |  Shows the information about this boss (drops & locations)\n' +
 '**sao item**  |  Lists all items currently registered\n' +
-'**sao item** <Item name>  |  Shows the information about this item (dropping monsters)';
+'**sao item** <Item name>  |  Shows the information about this item (dropping monsters)\n' +
+'**sao map**  |  Lists all maps currently registered\n' +
+'**sao map** <Map name>  |  Shows the information about this map (monsters, NPCs & portals)';
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -76,6 +79,21 @@ getMobsWithItem = (itemName) => {
 	return foundMobs ? mobsWithItem : undefined;
 };
 
+getMobsOnMap = (mapName) => {
+	let mobsOnMap = {};
+	let foundMobs = false;
+	for (let mobName in mobs) {
+		if (mobs.hasOwnProperty(mobName)) {
+			let mob = mobs[mobName];
+			if (mob['maps'].indexOf(mapName) != -1) {
+				mobsOnMap[mobName] = mob;
+				foundMobs = true;
+			}
+		}
+	}
+	return foundMobs ? mobsOnMap : undefined;
+};
+
 getRandomFile = (folder) => {
 	let fs = require('fs');
 	let files = fs.readdirSync(folder);
@@ -128,6 +146,36 @@ handleCmdItem = (message) => {
 					'./img/items/' + itemName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
 				]
 			}*/
+		}
+	}
+	send(message, answer, options);
+};
+
+handleCmdMap = (message) => {
+    let args = message.content.substring(4).split(' ');
+	let mapName = args.splice(1, args.length - 1).join(' ');
+	let answer;
+	let options;
+	logger.info('handleCmdMap for ' + mapName);
+	if (mapName === '') {
+		answer = 'List of all registered maps:\n***' + Object.keys(maps).join('***, ***') + '***'
+	} else {
+		let map = maps[mapName];
+		if (map === undefined) {
+			answer = 'Map ***' + mapName + '*** is unknown. Did you write it correctly?';
+		} else {
+			let mobsOnMap = getMobsOnMap(mapName);
+			if (mobsOnMap === undefined) {
+				answer = 'Map ***' + mapName + '*** dosn\'t hold any mobs.';
+			} else {
+				answer = '**' + mapName + '** holds the following mobs: ***' + Object.keys(mobsOnMap).join('***, ***') + '***';
+			}
+			answer += '\nNPCs: ***' + map.npcs.join('***, ***') + '***\nPortals: ***' + map.portals.join('***, ***') + '***';
+			options = {
+				files: [
+					'./img/maps/' + mapName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
+				]
+			}
 		}
 	}
 	send(message, answer, options);
@@ -189,9 +237,14 @@ bot.on('message', message => {
 				handleCmdMob(message, true);
 				break;
             case 'item':
+            case 'items':
             case 'drop':
             case 'drops':
 				handleCmdItem(message);
+				break;
+            case 'map':
+            case 'maps':
+				handleCmdMap(message);
 				break;
             case 'meme':
             case 'memes':
