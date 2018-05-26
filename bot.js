@@ -28,7 +28,7 @@ let help =
 '**sao info** <Username>  |  Asks for information about this user\n' +
 '**sao set** <attribute> <value>  |  Sets the value for my own attribute';
 
-let availablePlayerAttributes = ['id'];
+let availablePlayerAttributes = ['id', 'img', 'image'];
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -220,6 +220,9 @@ handleCmdPlayer = (message) => {
 			logger.info('player info ' + playerName);
 			logger.info(player);
 			answer = '**' + playerName + '**:\n ID: ' + player.id;
+			if (player.image != undefined) {
+				options = {files: [player.image]};
+			}
 			send(message, answer, options);
 		}, () => {
 			logger.info('handleCmdPlayer error loading file ' + fileName);
@@ -240,11 +243,26 @@ handleCmdSet = (message) => {
 		answer = 'What attribute value do you want to set? Use ***sao set <attribute> <value>***';
 	} else if (availablePlayerAttributes.indexOf(attributeName) === -1) {
 		answer = 'You are not allowed to set the attribute ***' + attributeName + '***';
-	} else if (attributeValue === undefined) {
+	} else if (attributeValue === undefined && attributeName != 'img' && attributeName != 'image') {
 		answer = 'A value is needed. Use ***sao set <attribute> <value>***';
 	} else {
 		let answer;
 		let fileName = 'data/players/' + playerName.toLowerCase() + '.json';
+		if (attributeName === 'image' || attributeName === 'img') {
+			if (message.attachments.length === 0) {
+				answer = 'There is no picture attached to your message.';
+				send(message, answer);
+				return;
+			}
+			attributeName = 'image';
+			// logger.info('message.attachments:');
+			// logger.info(message.attachments);
+			message.attachments.forEach(messageAttachment => {
+				attributeValue = messageAttachment.url;
+				// answer = 'Stored image for ' + playerName;
+				// send(message, answer, {files: [messageAttachment.url]});
+			});
+		}
 		let setAttribute = (player) => {
 			player[attributeName] = attributeValue;
 			saveJSON(fileName, player, () => {
@@ -259,15 +277,9 @@ handleCmdSet = (message) => {
 			logger.info('player info ' + playerName);
 			logger.info(player);
 			setAttribute(player);
-			
-			// answer = '**' + playerName + '**:\n ID: ' + player.id;
-			// send(message, answer, options);
 		}, () => {
 			logger.info('handleCmdSet file doesn\'t exist yet: ' + fileName);
 			setAttribute({});
-			
-			// answer = 'Player ***' + playerName + '*** is unknown. Did you write him correctly?';
-			// send(message, answer, options);
 		});
 		return;
 	}
