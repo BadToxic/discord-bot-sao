@@ -3,6 +3,7 @@ let Discord = require('discord.js');
 let logger = require('winston');
 let auth = require('./auth.json');
 let fs = require("fs");
+let {Client} = require('pg');
 // let XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 // let $ = require('jquery');
 
@@ -49,6 +50,19 @@ bot.on('ready', (evt) => {
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
 
+let db = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: false
+});
+/*db.connect();
+
+db.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+  if (err) throw err;
+  for (let row of res.rows) {
+    console.log(JSON.stringify(row));
+  }
+  db.end();
+});*/
 
 // Login to Discord with your app's token
 bot.login(auth.token);
