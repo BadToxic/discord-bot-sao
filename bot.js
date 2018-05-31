@@ -50,11 +50,19 @@ bot.on('ready', (evt) => {
     logger.info(bot.username + ' - (' + bot.id + ')');
 });
 
+const connectionString = 'dbname=' + process.env.PGDATABASE + ' host=ec2-79-125-110-209.eu-west-1.compute.amazonaws.com port=5432 user=' + process.env.PGUSER + ' password=' + process.env.PGPASSWORD; // + ' sslmode=require';
+logger.info(connectionString);
 let db = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: false
+  // connectionString: process.env.PGDATABASE,
+  // connectionString: connectionString,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  host: 'ec2-79-125-110-209.eu-west-1.compute.amazonaws.com',
+  port: 5432,
+  ssl: true
 });
-/*db.connect();
+db.connect();
 
 db.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
   if (err) throw err;
@@ -62,7 +70,7 @@ db.query('SELECT table_schema,table_name FROM information_schema.tables;', (err,
     console.log(JSON.stringify(row));
   }
   db.end();
-});*/
+});
 
 // Login to Discord with your app's token
 bot.login(auth.token);
