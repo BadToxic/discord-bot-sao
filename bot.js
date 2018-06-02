@@ -187,7 +187,7 @@ handleCmdMob = (message, boss) => {
 	let mobsToCheck = boss ? getBosses() : mobs;
 	logger.info('handleCmdMob for (boss only: ' + boss + ') ' + mobName);
 	if (mobName === '') {
-		answer = 'List of all registered ' + (boss ? 'bosses' : 'monsters') + ':\n***' + Object.keys(mobsToCheck).join('***, ***') + '***'
+		answer = 'List of all registered ' + (boss ? 'bosses' : 'monsters') + ':\n***' + Object.keys(mobsToCheck).join(', ') + '***'
 	} else {
 		let mob = mobsToCheck[mobName];
 		if (mob === undefined) {
