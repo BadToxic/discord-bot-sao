@@ -17,8 +17,8 @@
    "Recover Flower – Blue": {
         "drops": [],
 		"effects": ["Recover HP"],
-		"maps": ["1F Labyrinth"],
-		"floors": [1]
+		"maps": ["1F Labyrinth", "Snowlit Woods", "8F Labyrinth"],
+		"floors": [1, 8]
    },
    "Kobold Henchman": {
         "drops": ["Small Metal Piece", "Coarse Stone"],
@@ -61,7 +61,7 @@
 		"maps": ["Parched Plains"],
 		"floors": [2]
    },
-   "Recovery Flower – Yellow": {
+   "Recover Flower – Yellow": {
         "drops": [],
 		"effects": ["Recover 50HP"],
 		"maps": ["Grotto Plains", "2F Labyrinth"],
@@ -362,5 +362,61 @@
 		"maps": ["7F Labyrinth"],
 		"isBoss": true,
 		"floors": [7]
+   },
+   "Penguin Knight (Large Size)": {
+        "drops": ["Piece of Icy Sword", "Snow Grass"],
+		"maps": ["Frozen Forest"],
+		"floors": [8]
+   },
+   "Rough Yeti": {
+        "drops": ["Yeti's Fur", "Snow Grass", "Red Fruit"],
+		"maps": ["Frozen Forest", "Snowlit Woods"],
+		"floors": [8]
+   },
+   "Frozen Guy Spirit": {
+        "drops": ["Feather from Icy Spirit", "Snow Grass", "Glare Stone", "Record Frame S"],
+		"maps": ["Frozen Forest", "8F Labyrinth"],
+		"floors": [8]
+   },
+   "Frozen Guy Spirit (Large Size)": {
+        "drops": ["Feather from Icy Spirit", "Snow Grass"],
+		"maps": ["Frozen Forest"],
+		"floors": [8]
+   },
+   "Penguin Ax": {
+        "drops": ["Icy Ax's Blade", "Snow Grass", "Glare Stone"],
+		"maps": ["Snowlit Woods"],
+		"floors": [8]
+   },
+   "Snow Spider": {
+        "drops": ["Pure White String", "Snow Grass", "Record Frame S", "Blue Jewel"],
+		"maps": ["Snowlit Woods"],
+		"floors": [8]
+   },
+   "Rough Yeti (Large Size)": {
+        "drops": ["Green Jewel", "Yellow Jewel"],
+		"maps": ["Snowlit Woods"],
+		"floors": [8]
+   },
+   "Wild Yeti": {
+        "drops": ["Slicing Stone", "Piercing Stone", "Snow Grass"],
+		"maps": ["8F Labyrinth"],
+		"floors": [8]
+   },
+   "Penguin Knight Berseker": {
+        "drops": ["Snow Grass", "Glare Rigid Stone"],
+		"maps": ["8F Labyrinth"],
+		"floors": [8]
+   },
+   "Tomato Slime": {
+        "drops": ["Snow Grass"],
+		"maps": ["8F Labyrinth"],
+		"floors": [8]
+   },
+   "Envy The Witch": {
+        "drops": [],
+		"maps": ["8F Labyrinth"],
+		"isBoss": true,
+		"floors": [8]
    }
 }
