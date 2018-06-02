@@ -11,6 +11,8 @@ let mobs = require('./data/mobs.json');
 let items = require('./data/items.json');
 let maps = require('./data/maps.json');
 
+let availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv'];
+
 let help = 
 'Notice: When using a command do not include "<" and ">".\n' +
 '(Example: sao mob Frenzy Boar)\n\n' +
@@ -18,18 +20,23 @@ let help =
 '**sao help**  |  Displays this help message.\n\n' +
 
 '***Ask information***\n' +
-'**sao mob**  |  Lists all mobs currently registered\n' +
-'**sao mob** <Mob name>  |  Shows the information about this mob (drops & locations)\n' +
-'**sao boss**  |  Lists all bosses currently registered\n' +
-'**sao boss** <Boss name>  |  Shows the information about this boss (drops & locations)\n' +
-'**sao item**  |  Lists all items currently registered\n' +
-'**sao item** <Item name>  |  Shows the information about this item (dropping monsters)\n' +
-'**sao map**  |  Lists all maps currently registered\n' +
-'**sao map** <Map name>  |  Shows the information about this map (monsters, NPCs & portals)\n' +
-'**sao info** <Username>  |  Asks for information about this user\n' +
-'**sao set** <attribute> <value>  |  Sets the value for my own attribute';
+'**sao [mob, mobs, monster, monsters]**  |  Lists all mobs currently registered\n' +
+'**sao [mob, mobs, monster, monsters]** <Mob name>  |  Shows the information about this mob (drops & locations)\n' +
+'**sao [boss, bosses]**  |  Lists all bosses currently registered\n' +
+'**sao [boss, bosses]** <Boss name>  |  Shows the information about this boss (drops & locations)\n' +
+'**sao [item, items, drop, drops]**  |  Lists all items currently registered\n' +
+'**sao [item, items, drop, drops]** <Item name>  |  Shows the information about this item (dropping monsters)\n' +
+'**sao [map, maps]**  |  Lists all maps currently registered\n' +
+'**sao [map, maps]** <Map name>  |  Shows the information about this map (monsters, NPCs & portals)\n' +
+'**sao [info, player, players]**  |  Lists all players currently registered\n' +
+'**sao [info, player, players]** <Username>  |  Asks for information about this user\n' +
+'**sao set [' + availablePlayerAttributes.join(', ') + ']** <value>  |  Sets the value for my own attribute\n' +
+'      If you choose to set your image you have to send it in the same message instead of a value.\n\n' +
 
-let availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv'];
+'***For Fun***\n' +
+'**sao [meme, memes]**  |  Get a random SAO meme\n' +
+'**sao [girl, girls]**  |  Get a random SAO girl';
+
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -227,7 +234,30 @@ handleCmdPlayer = (message) => {
 	let playerID = args.splice(1, args.length - 1).join(' ');
 	logger.info('handleCmdPlayer for ' + playerID);
 	if (playerID === '') {
-		// answer = 'List of all registered playerName:\n***' + Object.keys(maps).join('***, ***') + '***' // TODO
+		const db = getDbClient();
+		db.connect(connectionErr => {
+			if (connectionErr) {
+				answer = 'Sorry, I could not connect to the database.'
+				logger.info('Could not connect to database.');
+				logger.info(connectionErr);
+				send(message, answer);
+			} else {
+				const query = 'SELECT discord_name FROM players;'
+				db.query(query, (err, result) => {
+					if (err) {
+						logger.info('Error on querry!');
+						logger.info(err);
+						answer = 'Error: No players found.';
+					} else if (result.rowCount === 0) {
+						answer = 'No players found.';
+					} else {
+						answer = 'List of all registered players:\n***' + result.rows.map(row => row.discord_name.trim()).join('***, ***') + '***';
+					}
+					send(message, answer);
+					db.end();
+				});
+			}
+        });
 	} else {
 		let answer;
 		let options;
@@ -456,6 +486,7 @@ bot.on('message', message => {
 				handleCmdMob(message, false);
 				break;
             case 'boss':
+            case 'bosses':
 				handleCmdMob(message, true);
 				break;
             case 'item':
