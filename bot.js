@@ -29,7 +29,7 @@ let help =
 '**sao info** <Username>  |  Asks for information about this user\n' +
 '**sao set** <attribute> <value>  |  Sets the value for my own attribute';
 
-let availablePlayerAttributes = ['id', 'img', 'image'];
+let availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv'];
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -48,28 +48,6 @@ bot.on('ready', (evt) => {
     logger.info('Connected');
     logger.info('Logged in as: ');
     logger.info(bot.username + ' - (' + bot.id + ')');
-});
-
-const connectionString = 'dbname=' + process.env.PGDATABASE + ' host=ec2-79-125-110-209.eu-west-1.compute.amazonaws.com port=5432 user=' + process.env.PGUSER + ' password=' + process.env.PGPASSWORD; // + ' sslmode=require';
-logger.info(connectionString);
-let db = new Client({
-  // connectionString: process.env.PGDATABASE,
-  // connectionString: connectionString,
-  user: process.env.PGUSER,
-  password: process.env.PGPASSWORD,
-  database: process.env.PGDATABASE,
-  host: 'ec2-79-125-110-209.eu-west-1.compute.amazonaws.com',
-  port: 5432,
-  ssl: true
-});
-db.connect();
-
-db.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-  if (err) throw err;
-  for (let row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
-  db.end();
 });
 
 // Login to Discord with your app's token
@@ -128,6 +106,22 @@ getRandomFile = (folder) => {
 	let files = fs.readdirSync(folder);
 	return folder + files[Math.floor(Math.random() * files.length)];
 };
+
+getTimeStamp = (date) => {
+   return ((date.getMonth() + 1) + '/' + (date.getDate()) + '/' + date.getFullYear() + " " + date.getHours() + ':'
+		+ ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : (date.getMinutes())) + ':' + ((date.getSeconds() < 10) ? ("0" + date.getSeconds()) : (date.getSeconds())));
+}
+
+getDbClient = () => {
+   return  new Client({
+	  user: process.env.PGUSER,
+	  password: process.env.PGPASSWORD,
+	  database: process.env.PGDATABASE,
+	  host: 'ec2-79-125-110-209.eu-west-1.compute.amazonaws.com',
+	  port: 5432,
+	  ssl: true
+	});
+}
 
 /*loadJSONxhr = (path, onSuccess, onError) => {
     let xhr = new XMLHttpRequest();
@@ -230,28 +224,72 @@ handleCmdItem = (message) => {
 
 handleCmdPlayer = (message) => {
     let args = message.content.substring(4).split(' ');
-	let playerName = args.splice(1, args.length - 1).join(' ');
-	logger.info('handleCmdPlayer for ' + playerName);
-	if (playerName === '') {
+	let playerID = args.splice(1, args.length - 1).join(' ');
+	logger.info('handleCmdPlayer for ' + playerID);
+	if (playerID === '') {
 		// answer = 'List of all registered playerName:\n***' + Object.keys(maps).join('***, ***') + '***' // TODO
 	} else {
 		let answer;
 		let options;
-		let fileName = 'data/players/' + playerName.toLowerCase() + '.json';
-		loadJSON(fileName, (player) => {
-			logger.info('player info ' + playerName);
+		// playerID = playerID.replace(/[<@!>]/g, '');
+		// This can only be used when on same server:
+		const player = message.mentions.members.first();
+		/*bot.fetchUser(playerID).then(player => {
+			// Do some stuff with the user object.
+			logger.info('player:');
 			logger.info(player);
-			answer = '**' + playerName + '**:\n ID: ' + player.id;
-			if (player.image != undefined) {
-				options = {files: [player.image]};
+		}, rejection => {
+			// Handle the error in case one happens (that is, it could not find the user.)
+			logger.info('No player with id ' + playerID + ' found.');
+		});*/
+		
+		if (player === undefined || player === null) {
+			answer = 'Player is unknown. Did you write him correctly?';
+			send(message, answer);
+			return;
+		}
+		
+		const db = getDbClient();
+		db.connect(connectionErr => {
+			if (connectionErr) {
+				answer = 'Sorry, I could not connect to the database.'
+				logger.info('Could not connect to database.');
+				logger.info(connectionErr);
+				send(message, answer);
+			} else {
+				// logger.info('db connected');
+				const query = 'SELECT * FROM players WHERE discord_id = \'' + player.id + '\';'
+				// logger.info(query);
+				db.query(query, (err, result) => {
+					if (err) {
+						logger.info('Error on querry!');
+						logger.info(err);
+						answer = 'Error: No info for player ***' + player.username + '*** found.';
+					} else if (result.rowCount === 0) {
+						answer = 'No info for player ***' + player.username + '*** found.';
+					} else {
+						const row = result.rows[0];
+						// logger.info('result:');
+						// logger.info(result);
+						answer = '**' + row.discord_name + '**\n';
+						if (row.sao_level) {
+							answer += '**Level: ' + row.sao_level + '**\n';
+						}
+						if (row.sao_id) {
+							answer += '**ID: ' + row.sao_id + '**\n';
+						}
+						if (row.sao_alt_id) {
+							answer += 'Second Account ID: ' + row.sao_alt_id + '\n';
+						}
+						if (row.sao_image) {
+							options = {files: [row.sao_image]};
+						}
+					}
+					send(message, answer, options);
+					db.end();
+				});
 			}
-			send(message, answer, options);
-		}, () => {
-			logger.info('handleCmdPlayer error loading file ' + fileName);
-			// logger.info(xhr);
-			answer = 'Player ***' + playerName + '*** is unknown. Did you write him correctly?';
-			send(message, answer, options);
-		});
+        });
 	}
 };
 
@@ -259,8 +297,12 @@ handleCmdSet = (message) => {
     let args = message.content.substring(4).split(' ');
 	let attributeName = args[1];
 	let attributeValue = args[2];
-	let playerName = message.author.username;
-	logger.info('handleCmdSet ' + attributeName + '  = ' + attributeValue + ' for user ' + playerName);
+	let answer;
+	
+	const player = message.author; // message.mentions.members.first();
+	
+	// let playerName = message.author.username;
+	logger.info('handleCmdSet ' + attributeName + ' = ' + attributeValue + ' for user ' + player.username + ' (' + player.id + ')');
 	if (attributeName === undefined) {
 		answer = 'What attribute value do you want to set? Use ***sao set <attribute> <value>***';
 	} else if (availablePlayerAttributes.indexOf(attributeName) === -1) {
@@ -268,43 +310,58 @@ handleCmdSet = (message) => {
 	} else if (attributeValue === undefined && attributeName != 'img' && attributeName != 'image') {
 		answer = 'A value is needed. Use ***sao set <attribute> <value>***';
 	} else {
-		let answer;
-		let fileName = 'data/players/' + playerName.toLowerCase() + '.json';
+		// let fileName = 'data/players/' + playerName.toLowerCase() + '.json';
+		let sqlAttributeName;
 		if (attributeName === 'image' || attributeName === 'img') {
 			if (message.attachments.length === 0) {
 				answer = 'There is no picture attached to your message.';
 				send(message, answer);
 				return;
 			}
-			attributeName = 'image';
-			// logger.info('message.attachments:');
-			// logger.info(message.attachments);
+			sqlAttributeName = 'sao_image';
 			message.attachments.forEach(messageAttachment => {
 				attributeValue = messageAttachment.url;
-				// answer = 'Stored image for ' + playerName;
-				// send(message, answer, {files: [messageAttachment.url]});
 			});
+		} else if (attributeName === 'level' || attributeName === 'lv') {
+			sqlAttributeName = 'sao_level';
+		} else if (attributeName === 'id') {
+			sqlAttributeName = 'sao_id';
+		} else if (attributeName === 'altid') {
+			sqlAttributeName = 'sao_alt_id';
 		}
-		let setAttribute = (player) => {
-			player[attributeName] = attributeValue;
-			saveJSON(fileName, player, () => {
-				answer = 'Successfully set ' + attributeName + '  = ' + attributeValue + ' for ' + playerName;
+		
+		const db = getDbClient();
+		db.connect(connectionErr => {
+			if (connectionErr) {
+				answer = 'Sorry, I could not connect to the database.'
+				logger.info('Could not connect to database.');
+				logger.info(connectionErr);
 				send(message, answer);
-			}, () => {
-				answer = 'Sorry ' + playerName + ', I failed to set ' + attributeName + '  = ' + attributeValue;
-				send(message, answer);
-			});
-		};
-		loadJSON(fileName, (player) => {
-			logger.info('player info ' + playerName);
-			logger.info(player);
-			setAttribute(player);
-		}, () => {
-			logger.info('handleCmdSet file doesn\'t exist yet: ' + fileName);
-			setAttribute({});
-		});
+			} else {
+				// logger.info('db connected');
+				const now = '\'' + getTimeStamp(new Date()) + '\'';
+				const query = 'INSERT INTO players (discord_id, discord_name, created, updated, ' + sqlAttributeName + ') '
+					+ 'VALUES (\'' + player.id + '\', \'' + player.username + '\', ' + now + ', ' + now + ', \'' + attributeValue + '\') '
+					+ 'ON CONFLICT (discord_id) '
+					+ 'DO UPDATE SET discord_name = Excluded.discord_name, updated = Excluded.updated, ' + sqlAttributeName + ' = Excluded.' + sqlAttributeName + ';'
+				// logger.info(query);
+				db.query(query, (err, result) => {
+					if (err) {
+						logger.info('Error on querry!');
+						logger.info(err);
+						answer = 'Sorry ' + player.username + ', I failed to set ' + attributeName + '  = ' + attributeValue;
+					} else {
+						// logger.info('result:');
+						// logger.info(result);
+						answer = 'Successfully set ' + attributeName + '  = ' + attributeValue + ' for ' + player.username;
+					}
+					send(message, answer);
+					db.end();
+				});
+			}
+        });
 		return;
-	}
+    }
 	send(message, answer);
 };
 
@@ -370,7 +427,7 @@ bot.on('message', message => {
 				send(message, 'Pong!');
 				break;
          }
-     } else if (message.content.substring(0, 3) === 'sao') {
+     } else if (message.content.substring(0, 3).toLowerCase() === 'sao') {
         let args = message.content.substring(4).split(' ');
         logger.info(args);
         let cmd = args[0];
