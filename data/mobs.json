@@ -67,7 +67,7 @@
 		"maps": ["Grotto Plains", "2F Labyrinth"],
 		"floors": [2]
    },
-   "Horror Bats": {
+   "Horror Bat": {
         "drops": ["Blood Sucking Fangs", "Dried Hay"],
 		"maps": ["2F Labyrinth"],
 		"floors": [2]
@@ -174,7 +174,7 @@
 		"floors": [4]
    },
    "Mauve Bat": {
-        "drops": ["Blooducking Fang", "Clean Water"],
+        "drops": ["Bloodsucking Fang", "Clean Water"],
         "dungeonDrops": ["Jewel", "Refining Hammer", "Stone"],
 		"maps": ["Border Lake", "Dungeon – Bear Woods"],
 		"floors": [4]
