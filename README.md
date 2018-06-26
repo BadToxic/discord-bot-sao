@@ -1,32 +1,33 @@
-# node-js-getting-started
+# sao-if discord bot
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+This is a Discord bot for players of Sword Art Online - Integral Factor
 
-This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
 
-## Running Locally
+## Commands
 
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
+Notice: When using a command do not include "<" and ">".
+(Example: sao mob Frenzy Boar)
 
-```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
-$ npm install
-$ npm start
-```
+sao help  |  Displays a help message with these commands.
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+Ask information
+sao [mob, mobs, monster, monsters]  |  Lists all mobs currently registered
+sao [mob, mobs, monster, monsters] <Mob name>  |  Shows the information about this mob (drops & locations)
+sao [boss, bosses]  |  Lists all bosses currently registered
+sao [boss, bosses] <Boss name>  |  Shows the information about this boss (drops & locations)
+sao [item, items, drop, drops]  |  Lists all items currently registered
+sao [item, items, drop, drops] <Item name>  |  Shows the information about this item (dropping monsters)
+sao [map, maps]  |  Lists all maps currently registered
+sao [map, maps] <Map name>  |  Shows the information about this map (monsters, NPCs & portals)
+sao [info, player, players]  |  Lists all players currently registered
+sao [info, player, players] <Username>  |  Asks for information about this user
+sao set [id, altid, img, image, level, lv] <value>  |  Sets the value for my own attribute
+      If you choose to set your image you have to send it in the same message instead of a value.
 
-## Deploying to Heroku
+For Fun
+sao [meme, memes]  |  Get a random SAO meme
+sao [girl, girls]  |  Get a random SAO girl
 
-```
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-or
-
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
 ## Documentation
 

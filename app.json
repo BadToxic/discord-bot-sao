@@ -1,8 +1,14 @@
 {
-  "name": "Start on Heroku: Node.js",
-  "description": "A barebones Node.js app using Express 4",
-  "repository": "https://github.com/heroku/node-js-getting-started",
-  "logo": "https://cdn.rawgit.com/heroku/node-js-getting-started/master/public/node.svg",
-  "keywords": ["node", "express", "heroku"],
-  "image": "heroku/nodejs"
+  "name": "SAO IF Bot",
+  "description": "Discord bot for players of Sword Art Online - Integral Factor",
+  "repository": "https://github.com/BadToxic/discord-bot-sao",
+  "website": "http://badtoxic.de",
+  "logo": "",
+  "keywords": ["node", "sao", "heroku", "discord", "badtoxic", "swordartonline", "integralfactor"],
+  "addons": [{
+    "plan": "heroku-postgresql:hobby-dev"
+  }],
+  "scripts": {
+    "postdeploy": "psql $DATABASE_URL -f seed.sql"
+  }
 }
