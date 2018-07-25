@@ -347,7 +347,7 @@ handleCmdRank = (message) => {
 				} else {
 					answer = '';
 					let rank = 1;
-					result.rows.forech((player) => {
+					result.rows.forEach(player => {
 						answer += (rank++) + '. **' + player.discord_name + '** (level **' + player.sao_level + '**)\n';
 					});
 				}
