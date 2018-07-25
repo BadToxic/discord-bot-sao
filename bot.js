@@ -335,7 +335,7 @@ handleCmdRank = (message) => {
 			send(message, answer);
 		} else {
 			// logger.info('db connected');
-			const query = 'SELECT * FROM players ORDER_BY sao_level DESC;'
+			const query = 'SELECT * FROM players ORDER BY sao_level DESC;'
 			// logger.info(query);
 			db.query(query, (err, result) => {
 				if (err) {
@@ -351,7 +351,7 @@ handleCmdRank = (message) => {
 						answer += (rank++) + '. **' + player.discord_name + '** (level **' + player.sao_level + '**)\n';
 					});
 				}
-				send(message, answer, options);
+				send(message, answer);
 				db.end();
 			});
 		}
