@@ -31,7 +31,8 @@ let help =
 '**sao [info, player, players]**  |  Lists all players currently registered\n' +
 '**sao [info, player, players]** <Username>  |  Asks for information about this user\n' +
 '**sao set [' + availablePlayerAttributes.join(', ') + ']** <value>  |  Sets the value for my own attribute\n' +
-'      If you choose to set your image you have to send it in the same message instead of a value.\n\n' +
+'      If you choose to set your image you have to send it in the same message instead of a value.\n' +
+'**sao rank**  |  Lists all players sorted by their level\n\n' +
 
 '***For Fun***\n' +
 '**sao [meme, memes]**  |  Get a random SAO meme\n' +
@@ -323,6 +324,40 @@ handleCmdPlayer = (message) => {
 	}
 };
 
+handleCmdRank = (message) => {
+		
+	const db = getDbClient();
+	db.connect(connectionErr => {
+		if (connectionErr) {
+			answer = 'Sorry, I could not connect to the database.'
+			logger.info('Could not connect to database.');
+			logger.info(connectionErr);
+			send(message, answer);
+		} else {
+			// logger.info('db connected');
+			const query = 'SELECT * FROM players ORDER_BY sao_level DESC;'
+			// logger.info(query);
+			db.query(query, (err, result) => {
+				if (err) {
+					logger.info('Error on querry!');
+					logger.info(err);
+					answer = 'Error: No player ranks found.';
+				} else if (result.rowCount === 0) {
+					answer = 'No player ranks found.';
+				} else {
+					answer = '';
+					let rank = 1;
+					result.rows.forech((player) => {
+						answer += (rank++) + '. **' + player.discord_name + '** (level **' + player.sao_level + '**)\n';
+					});
+				}
+				send(message, answer, options);
+				db.end();
+			});
+		}
+	});
+};
+
 handleCmdSet = (message) => {
     let args = message.content.substring(4).split(' ');
 	let attributeName = args[1];
@@ -475,6 +510,9 @@ bot.on('message', message => {
             case 'players':
             case 'info':
 				handleCmdPlayer(message);
+				break;
+            case 'rank':
+				handleCmdRank(message);
 				break;
             case 'set':
 				handleCmdSet(message);
