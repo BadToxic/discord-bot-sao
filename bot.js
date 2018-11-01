@@ -27,6 +27,9 @@ let help =
 '**sao [boss, bosses]** <Boss name>  |  Shows the information about this boss (drops & locations)\n' +
 '**sao [item, items, drop, drops]**  |  Lists all items currently registered\n' +
 '**sao [item, items, drop, drops]** <Item name>  |  Shows the information about this item (dropping monsters)\n' +
+'**sao [skill, skills]**  |  Lists all skills currently registered\n' +
+'**sao [skill, skills]** <Skill name>  |  Shows the information about this skill (image of skill record)\n' +
+'**sao [skill, skills]** [person, character, player, by, of] <Person name> |  Lists all currently registered skills of this person\n' +
 '**sao [map, maps]**  |  Lists all maps currently registered\n' +
 '**sao [map, maps]** <Map name>  |  Shows the information about this map (monsters, NPCs & portals)\n' +
 '**sao [info, player, players]**  |  Lists all players currently registered\n' +
@@ -483,7 +486,21 @@ handleCmdSkill = (message) => {
 	let options;
 	logger.info('handleCmdSkill for ' + skillName);
 	if (skillName === '') {
-		answer = 'List of all registered skills:\n***' + Object.keys(skills).join('***, ***') + '***'
+		let skillNames = Object.keys(skills);
+		answer = 'List of all ' + skillNames.length + ' registered skills:\n***' + skillNames.join('***, ***') + '***'
+	} else if (args[0] === 'person' || args[0] === 'character' || args[0] === 'player' || args[0] === 'by' || args[0] === 'of') {
+		// Get skills of a person
+		if (args.length < 2) {
+			answer = 'Name the person you want to know the available skills of.'
+		} else {
+			let person = args[1];
+			let skillsOfPerson = getSkillsWithPerson(person).keys(skills);
+			if (skillsOfPerson.length === 0) {
+				answer = 'There are no skills registered for ' + person + '.';
+			} else {
+				answer = '**' + person + '**\'s skills:\n**' + '***[' + skillsOfPerson.join(']***, ***[') + ']***';
+			}
+		}
 	} else {
 		let skill = skills[skillName];
 		if (skill === undefined) {
@@ -492,7 +509,7 @@ handleCmdSkill = (message) => {
 			answer = '***[' + skillName + '] ' + skill.person + '***';
 			options = {
 				files: [
-					'./img/skills/' + skillName + '.png'
+					'./img/skills/' + skillName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.png'
 				]
 			}
 		}
