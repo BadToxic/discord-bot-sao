@@ -10,6 +10,7 @@ let {Client} = require('pg');
 let mobs = require('./data/mobs.json');
 let items = require('./data/items.json');
 let maps = require('./data/maps.json');
+let skills = require('./data/skills.json');
 
 let availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv'];
 
@@ -460,6 +461,30 @@ handleCmdMap = (message) => {
 	send(message, answer, options);
 };
 
+handleCmdSkill = (message) => {
+    let args = message.content.substring(4).split(' ');
+	let skillName = args.splice(1, args.length - 1).join(' ');
+	let answer;
+	let options;
+	logger.info('handleCmdSkill for ' + skillName);
+	if (skillName === '') {
+		answer = 'List of all registered skills:\n***' + Object.keys(skills).join('***, ***') + '***'
+	} else {
+		let skill = skills[skillName];
+		if (skill === undefined) {
+			answer = 'Skill ***' + skillName + '*** is unknown. Did you write it correctly?';
+		} else {
+			answer = '***[' + skillName + '] ' + skill.person + '***';
+			options = {
+				files: [
+					'./img/skills/' + skillName + '.png'
+				]
+			}
+		}
+	}
+	send(message, answer, options);
+};
+
 sendRandomFile = (message, folder) => {
 	options = {
 		files: [
@@ -536,6 +561,10 @@ bot.on('message', message => {
             case 'map':
             case 'maps':
 				handleCmdMap(message);
+				break;
+            case 'skill':
+            case 'skills':
+				handleCmdSkill(message);
 				break;
             case 'meme':
             case 'memes':
