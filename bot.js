@@ -486,7 +486,7 @@ handleCmdSkill = (message) => {
 	let options;
 	logger.info('handleCmdSkill for ' + skillName);
 	if (skillName === '') {
-		let skillNames = Object.keys(skills);
+		let skillNames = Object.keys(skills).map(skillKey => '[' + skillKey + '] ' + skills[skillKey].person);
 		answer = 'List of all ' + skillNames.length + ' registered skills:\n***' + skillNames.join('***, ***') + '***'
 	} else if (args[0] === 'person' || args[0] === 'character' || args[0] === 'player' || args[0] === 'by' || args[0] === 'of') {
 		// Get skills of a person
