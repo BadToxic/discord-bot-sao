@@ -65,6 +65,9 @@ bot.on('ready', (evt) => {
 // Login to Discord with your app's token
 bot.login(auth.token);
 
+capitalizeFirstLetter = (stringToChange) => {
+    return stringToChange.charAt(0).toUpperCase() + stringToChange.slice(1);
+}
 
 send = (message, answer, options) => {
 	message.channel.send(answer, options);
@@ -481,24 +484,27 @@ handleCmdMap = (message) => {
 
 handleCmdSkill = (message) => {
     let args = message.content.substring(4).split(' ');
-	let skillName = args.splice(1, args.length - 1).join(' ');
+	let arg1 = args[1]; // eg. 'person'
+	let arg2 = args[2]; // eg. person's name
+	let skillName = args.splice(1, args.length - 1).join(' '); // Will destroy args array
 	let answer;
 	let options;
 	logger.info('handleCmdSkill for ' + skillName);
 	if (skillName === '') {
 		let skillNames = Object.keys(skills).map(skillKey => '[' + skillKey + '] ' + skills[skillKey].person);
 		answer = 'List of all ' + skillNames.length + ' registered skills:\n***' + skillNames.join('***, ***') + '***'
-	} else if (args[1] === 'person' || args[1] === 'character' || args[1] === 'player' || args[1] === 'by' || args[1] === 'of') {
+	} else if (arg1 === 'person' || arg1 === 'character' || arg1 === 'player' || arg1 === 'by' || arg1 === 'of') {
 		// Get skills of a person
-		if (args.length < 3) {
+		if (arg2 === undefined) {
 			answer = 'Name the person you want to know the available skills of.'
 		} else {
-			let person = args[2];
-			let skillsOfPerson = getSkillsWithPerson(person).keys(skills);
-			if (skillsOfPerson.length === 0) {
-				answer = 'There are no skills registered for ' + person + '.';
+			let person = capitalizeFirstLetter(arg2);
+			let skillsOfPerson = getSkillsWithPerson(person);
+			if (skillsOfPerson === undefined) {
+				answer = 'There are no skills registered for **' + person + '**.';
 			} else {
-				answer = '**' + person + '**\'s skills:\n**' + '***[' + skillsOfPerson.join(']***, ***[') + ']***';
+				skillsOfPerson = Object.keys(skillsOfPerson);
+				answer = '**' + person + '**\'s skills:\n***[' + skillsOfPerson.join(']***, ***[') + ']***';
 			}
 		}
 	} else {
