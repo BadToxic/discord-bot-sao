@@ -1,37 +1,37 @@
 {
    "Black Swordsmans Memory": {
         "person":"Kirito",
-		"weapon": "1H Sword"]
+		"weapon": "1H Sword",
 		"stars": 4
    },
    "Azure Swordsmans Memory": {
         "person":"Eugeo",
-		"weapon": "1H Sword"]
+		"weapon": "1H Sword",
 		"stars": 4
    },
    "Underworld Knight": {
         "person":"Alice",
-		"weapon": "1H Sword"]
+		"weapon": "1H Sword",
 		"stars": 4
    },
    "Underworld Swordsmans": {
         "person":"Eugeo",
-		"weapon": "1H Sword"]
+		"weapon": "1H Sword",
 		"stars": 4
    },
    "Winners Margin": {
         "person":"Kirito",
-		"weapon": "1H Sword"]
+		"weapon": "1H Sword",
 		"stars": 4
    },
    "Exotic Woods": {
         "person":"Yuuki",
-		"weapon": "1H Sword"]
+		"weapon": "1H Sword",
 		"stars": 4
    },
    "Mischievous eyes": {
         "person":"Leafa",
-		"weapon": "Passive"]
+		"weapon": "Passive",
 		"stars": 4
    }
 }

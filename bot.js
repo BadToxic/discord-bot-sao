@@ -95,6 +95,21 @@ getMobsWithItem = (itemName) => {
 	return foundMobs ? mobsWithItem : undefined;
 };
 
+getSkillsWithPerson = (personName) => {
+	let skillsWithPerson = {};
+	let foundSkills = false;
+	for (let skillName in skills) {
+		if (skills.hasOwnProperty(skillName)) {
+			let skill = skills[skillName];
+			if (skill['person'] == personName) {
+				skillsWithPerson[skillName] = skill;
+				foundSkills = true;
+			}
+		}
+	}
+	return foundSkills ? skillsWithPerson : undefined;
+};
+
 getMobsOnMap = (mapName) => {
 	let mobsOnMap = {};
 	let foundMobs = false;
