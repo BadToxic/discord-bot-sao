@@ -488,12 +488,12 @@ handleCmdSkill = (message) => {
 	if (skillName === '') {
 		let skillNames = Object.keys(skills).map(skillKey => '[' + skillKey + '] ' + skills[skillKey].person);
 		answer = 'List of all ' + skillNames.length + ' registered skills:\n***' + skillNames.join('***, ***') + '***'
-	} else if (args[0] === 'person' || args[0] === 'character' || args[0] === 'player' || args[0] === 'by' || args[0] === 'of') {
+	} else if (args[1] === 'person' || args[1] === 'character' || args[1] === 'player' || args[1] === 'by' || args[1] === 'of') {
 		// Get skills of a person
-		if (args.length < 2) {
+		if (args.length < 3) {
 			answer = 'Name the person you want to know the available skills of.'
 		} else {
-			let person = args[1];
+			let person = args[2];
 			let skillsOfPerson = getSkillsWithPerson(person).keys(skills);
 			if (skillsOfPerson.length === 0) {
 				answer = 'There are no skills registered for ' + person + '.';
