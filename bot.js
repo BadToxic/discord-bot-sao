@@ -32,6 +32,8 @@ const help =
 '**sao [skill, skills]**  |  Lists all skills currently registered\n' +
 '**sao [skill, skills]** <Skill name>  |  Shows the information about this skill (image of skill record)\n' +
 '**sao [skill, skills] [person, character, player, by, of]** <Person name> |  Lists all currently registered skills of this person\n' +
+'**sao [skill, skills] [weapon, arm, for]** <Weapon name> |  Lists all currently registered skills for this weapon\n' +
+'**sao [skill, skills] [star, stars]** <Number of stars> |  Lists all currently registered skills with this amount of stars\n' +
 '**sao [map, maps]**  |  Lists all maps currently registered\n' +
 '**sao [map, maps]** <Map name>  |  Shows the information about this map (monsters, NPCs & portals)\n' +
 '**sao [info, player, players]**  |  Lists all players currently registered\n' +
@@ -137,13 +139,41 @@ getSkillsWithPerson = (personName) => {
 	for (let skillName in skills) {
 		if (skills.hasOwnProperty(skillName)) {
 			let skill = skills[skillName];
-			if (skill['person'] == personName) {
+			if (skill['person'] === personName) {
 				skillsWithPerson[skillName] = skill;
 				foundSkills = true;
 			}
 		}
 	}
 	return foundSkills ? skillsWithPerson : undefined;
+};
+getSkillsForWeapon = (weaponName) => {
+	let skillsForWeapon = {};
+	let foundSkills = false;
+	for (let skillName in skills) {
+		if (skills.hasOwnProperty(skillName)) {
+			let skill = skills[skillName];
+			if (skill['weapon'] === weaponName) {
+				skillsForWeapon[skillName] = skill;
+				foundSkills = true;
+			}
+		}
+	}
+	return foundSkills ? skillsForWeapon : undefined;
+};
+getSkillsWithStars = (starNumber) => {
+	let skillsWithStars = {};
+	let foundSkills = false;
+	for (let skillName in skills) {
+		if (skills.hasOwnProperty(skillName)) {
+			let skill = skills[skillName];
+			if (skill['stars'] === starNumber) {
+				skillsWithStars[skillName] = skill;
+				foundSkills = true;
+			}
+		}
+	}
+	return foundSkills ? skillsWithStars : undefined;
 };
 
 getMobsOnMap = (mapName) => {
@@ -528,7 +558,7 @@ handleCmdSkill = (message) => {
 	if (skillName === '') {
 		let skillNames = Object.keys(skills).map(skillKey => '[' + skillKey + '] ' + skills[skillKey].person);
 		answer = 'List of all ' + skillNames.length + ' registered skills:\n***' + skillNames.join('***, ***') + '***'
-	} else if (arg1 === 'person' || arg1 === 'character' || arg1 === 'player' || arg1 === 'by' || arg1 === 'of') {
+	} else if (arg1 === 'person' || arg1 === 'character' || arg1 === 'player' || arg1 === 'by' || arg1 === 'of' || arg1 === 'spieler' || arg1 === 'von') {
 		// Get skills of a person
 		if (arg2 === undefined) {
 			answer = 'Name the person you want to know the available skills of.'
@@ -540,6 +570,43 @@ handleCmdSkill = (message) => {
 			} else {
 				skillsOfPerson = Object.keys(skillsOfPerson);
 				answer = '**' + person + '**\'s skills:\n***[' + skillsOfPerson.join(']***, ***[') + ']***';
+			}
+		}
+	} else if (arg1 === 'weapon' || arg1 === 'arm'  || arg1 === 'waffe' || arg1 === 'for' || arg1 === 'für') {
+		// Get skills for a weapon
+		if (arg2 === undefined) {
+			answer = 'Name the weapon type you want to know the available skills of.'
+		} else {
+			let weapon = capitalizeFirstLetter(arg2).replace('1h', '1H').replace('2h', '2H');
+			if (weapon === 'Sword' || weapon === 'Rapier' || weapon === 'Mace') {
+				weapon = '1H ' + weapon;
+			} else if (weapon === 'Axe' || weapon === 'Spear') {
+				weapon = '2H ' + weapon;
+			}
+			let skillsForWeapon = getSkillsForWeapon(weapon);
+			if (skillsForWeapon === undefined) {
+				answer = 'There are no known weapon type **' + weapon + '**.';
+			} else {
+				skillsForWeapon = Object.keys(skillsForWeapon).map(skillKey => '[' + skillKey + '] ' + skills[skillKey].person);
+				answer = 'Skills for **' + weapon + '**:\n***' + skillsForWeapon.join('***, ***') + '***';
+			}
+		}
+	} else if (arg1 === 'star' || arg1 === 'stars'  || arg1 === 'Sterne' || arg1 === 'Stern') {
+		// Get skills with this number of stars
+		if (arg2 === undefined) {
+			answer = 'Name the number of stars you want to know the available skills with.'
+		} else {
+			let starNumber = parseInt(arg2, 10);
+			if (starNumber === NaN || starNumber < 1 || starNumber > 4) {
+				answer = starNumber + ' is not a valid number. The allowed range is 1 - 4.'
+			} else {
+				let skillsWithStars = getSkillsWithStars(starNumber);
+				if (skillsWithStars === undefined) {
+					answer = 'There are no skills with **' + starNumber + '** stars registered.';
+				} else {
+					skillsWithStars = Object.keys(skillsWithStars).map(skillKey => '[' + skillKey + '] ' + skills[skillKey].person);
+					answer = 'Skills with **' + starNumber + ' stars**:\n***' + skillsWithStars.join('***, ***') + '***';
+				}
 			}
 		}
 	} else {
