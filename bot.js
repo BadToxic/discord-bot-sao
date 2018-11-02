@@ -1,20 +1,22 @@
 // let Discord = require('discord.io');
-let Discord = require('discord.js');
-let logger = require('winston');
-let auth = require('./auth.json');
-let fs = require("fs");
-let {Client} = require('pg');
+const Discord = require('discord.js');
+const logger = require('winston');
+const auth = require('./auth.json');
+const fs = require("fs");
+const {Client} = require('pg');
 // let XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 // let $ = require('jquery');
 
-let mobs = require('./data/mobs.json');
-let items = require('./data/items.json');
-let maps = require('./data/maps.json');
-let skills = require('./data/skills.json');
+const mobs = require('./data/mobs.json');
+const items = require('./data/items.json');
+const maps = require('./data/maps.json');
+const skills = require('./data/skills.json');
 
-let availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv'];
+const DISCORD_MESSAGE_MAX_LENGTH = 2000;
 
-let help = 
+const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv'];
+
+const help = 
 'Notice: When using a command do not include "<" and ">".\n' +
 '(Example: sao mob Frenzy Boar)\n\n' +
 
@@ -29,7 +31,7 @@ let help =
 '**sao [item, items, drop, drops]** <Item name>  |  Shows the information about this item (dropping monsters)\n' +
 '**sao [skill, skills]**  |  Lists all skills currently registered\n' +
 '**sao [skill, skills]** <Skill name>  |  Shows the information about this skill (image of skill record)\n' +
-'**sao [skill, skills]** [person, character, player, by, of] <Person name> |  Lists all currently registered skills of this person\n' +
+'**sao [skill, skills] [person, character, player, by, of]** <Person name> |  Lists all currently registered skills of this person\n' +
 '**sao [map, maps]**  |  Lists all maps currently registered\n' +
 '**sao [map, maps]** <Map name>  |  Shows the information about this map (monsters, NPCs & portals)\n' +
 '**sao [info, player, players]**  |  Lists all players currently registered\n' +
@@ -52,7 +54,7 @@ logger.add(logger.transports.Console, {
 logger.level = 'debug';
 
 // Initialize Discord Bot
-let bot = new Discord.Client(/*{
+const bot = new Discord.Client(/*{
    token: auth.token,
    autorun: true
 }*/);
@@ -73,7 +75,32 @@ capitalizeFirstLetters = (stringToChange) => {
 }
 
 send = (message, answer, options) => {
-	message.channel.send(answer, options);
+	if (answer.length <= DISCORD_MESSAGE_MAX_LENGTH) {
+		message.channel.send(answer, options);
+		return;
+	}
+	// If answer is too long for discord, split it to multiple answers
+	const splitter = (longAnswer, allowedLength) => {
+		var strs = [];
+		while(longAnswer.length > allowedLength){
+			let pos = longAnswer.substring(0, allowedLength).lastIndexOf(' ');
+			pos = pos <= 0 ? allowedLength : pos;
+			strs.push(longAnswer.substring(0, pos));
+			let spaceIndex = longAnswer.indexOf(' ', pos) + 1;
+			if(spaceIndex < pos || spaceIndex > pos + allowedLength) {
+				spaceIndex = pos;
+			}
+			longAnswer = longAnswer.substring(spaceIndex);
+		}
+		strs.push(longAnswer);
+		return strs;
+	}
+	const answers = splitter(answer, DISCORD_MESSAGE_MAX_LENGTH);
+	let answerIndex = 1;
+	answers.forEach((singleAnswer) => {
+		message.channel.send(singleAnswer, answerIndex === answers.length ? options : undefined);
+		answerIndex++;
+	});
 };
 
 getBosses = () => {
