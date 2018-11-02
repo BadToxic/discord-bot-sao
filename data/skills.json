@@ -54,7 +54,7 @@
 		"weapon": "1H Sword",
 		"stars": 4
    },
-   "Sylph of Spring Sky": {
+   "Sylph Of Spring Sky": {
         "person":"Leafa",
 		"weapon": "1H Sword",
 		"stars": 4
@@ -104,6 +104,50 @@
 		"weapon": "1H Sword",
 		"stars": 4
    },
+   "Cool Swordsman": {
+        "person":"Kirito",
+		"weapon": "1H Sword",
+		"stars": 3
+   },
+   "Prescient": {
+        "person":"Leafa",
+		"weapon": "1H Sword",
+		"stars": 3
+   },
+   "First Weapon": {
+        "person":"Kirito",
+		"weapon": "1H Sword",
+		"stars": 1
+   },
+   "Upbeat Warrior": {
+        "person":"Klein",
+		"weapon": "1H Sword",
+		"stars": 1
+   },
+   "Samurai Soul": {
+        "person":"Klein",
+		"weapon": "1H Sword",
+		"stars": 2,
+		"passive": true
+   },
+   "Spirited": {
+        "person":"Leafa",
+		"weapon": "1H Sword",
+		"stars": 2,
+		"passive": true
+   },
+   "Valiant Guide": {
+        "person":"Diavel",
+		"weapon": "1H Sword",
+		"stars": 1,
+		"passive": true
+   },
+   "Cool Strike": {
+        "person":"Kirito",
+		"weapon": "1H Sword",
+		"stars": 1,
+		"passive": true
+   },
    "Halloween Cat": {
         "person":"Leafa",
 		"weapon": "2H Axe",
@@ -143,6 +187,56 @@
         "person":"Agil",
 		"weapon": "2H Axe",
 		"stars": 4
+   },
+   "Heavy Attacker": {
+        "person":"Agil",
+		"weapon": "2H Axe",
+		"stars": 3
+   },
+   "Mismatch Fire": {
+        "person":"Silica",
+		"weapon": "2H Axe",
+		"stars": 3
+   },
+   "Passionate Smith": {
+        "person":"Agil",
+		"weapon": "2H Axe",
+		"stars": 1
+   },
+   "Calm Warrior": {
+        "person":"Godfree",
+		"weapon": "2H Axe",
+		"stars": 1
+   },
+   "Tactician": {
+        "person":"Argo",
+		"weapon": "2H Axe",
+		"stars": 4,
+		"passive": true
+   },
+   "Strong Smith": {
+        "person":"Agil",
+		"weapon": "2H Axe",
+		"stars": 2,
+		"passive": true
+   },
+   "Unhateable": {
+        "person":"Silica",
+		"weapon": "2H Axe",
+		"stars": 2,
+		"passive": true
+   },
+   "Good Encounter": {
+        "person":"Klein",
+		"weapon": "2H Axe",
+		"stars": 1,
+		"passive": true
+   },
+   "Reserved": {
+        "person":"Tetsuo",
+		"weapon": "2H Axe",
+		"stars": 1,
+		"passive": true
    },
    "Sultry Summer Night": {
         "person":"Asuna",
@@ -224,7 +318,192 @@
 		"weapon": "1H Rapier",
 		"stars": 4
    },
-   "Mischievous eyes": {
+   "Azure Pursuit": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Striving Effort": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Serene Lancer": {
+        "person":"Leafa",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Summer Shot": {
+        "person":"Leafa",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Blossoming Lancer": {
+        "person":"Yuuki",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Sweetheart": {
+        "person":"Asuna",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Black Spear": {
+        "person":"Silica",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Flapper Spear": {
+        "person":"Lisbeth",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Majestic": {
+        "person":"Klein",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Twilight Beach": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Sunny Hill": {
+        "person":"Asuna",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Gunners Compassion": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Devilish Smile": {
+        "person":"Yuuki",
+		"weapon": "2H Spear",
+		"stars": 4
+   },
+   "Secret Dagger": {
+        "person":"Silica",
+		"weapon": "Dagger",
+		"stars": 4
+   },
+   "Summer Drink": {
+        "person":"Silica",
+		"weapon": "Dagger",
+		"stars": 4
+   },
+   "First Bite": {
+        "person":"Leafa",
+		"weapon": "Dagger",
+		"stars": 4
+   },
+   "Sword Breaker": {
+        "person":"Philia",
+		"weapon": "Dagger",
+		"stars": 4
+   },
+   "Night Blooming Flower": {
+        "person":"Yuuki",
+		"weapon": "Dagger",
+		"stars": 4
+   },
+   "Piercing Gaze": {
+        "person":"Sinon",
+		"weapon": "Dagger",
+		"stars": 4
+   },
+   "Best Partner": {
+        "person":"Silica",
+		"weapon": "Dagger",
+		"stars": 4
+   },
+   "Calm Archer": {
+        "person":"Sinon",
+		"weapon": "Bow",
+		"stars": 4
+   },
+   "Lone Wolf Bow": {
+        "person":"Sinon",
+		"weapon": "Bow",
+		"stars": 4
+   },
+   "Sniper Eye": {
+        "person":"Sinon",
+		"weapon": "Bow",
+		"stars": 4
+   },
+   "Wonder Hat": {
+        "person":"Sinon",
+		"weapon": "Bow",
+		"stars": 4
+   },
+   "Cutting Edge Bullet": {
+        "person":"Kirito",
+		"weapon": "Bow",
+		"stars": 4
+   },
+   "Cute Vampire": {
+        "person":"Sinon",
+		"weapon": "Bow",
+		"stars": 4
+   },
+   "Lady Style": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Starry Summer Time": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Full Offense": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Loyal Hammer": {
+        "person":"Koharu",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Fortune": {
+        "person":"Kirito",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Holiday Moment": {
+        "person":"Sachi",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Shy Seaside": {
+        "person":"Koharu",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Trouble Rabbit": {
+        "person":"Silica",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Coffin Break": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 4
+   },
+   "Unbeatable": {
+        "person":"Agil",
+		"weapon": "Shield",
+		"stars": 4
+   },
+   "Shield Of Loyalty": {
+        "person":"Kizmel",
+		"weapon": "Shield",
+		"stars": 4
+   },
+   "Mischievous Eyes": {
         "person":"Leafa",
 		"weapon": "Passive",
 		"stars": 4

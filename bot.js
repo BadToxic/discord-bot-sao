@@ -68,6 +68,9 @@ bot.login(auth.token);
 capitalizeFirstLetter = (stringToChange) => {
     return stringToChange.charAt(0).toUpperCase() + stringToChange.slice(1);
 }
+capitalizeFirstLetters = (stringToChange) => {
+    return stringToChange.split(' ').map(capitalizeFirstLetter).join(' ');
+}
 
 send = (message, answer, options) => {
 	message.channel.send(answer, options);
@@ -210,8 +213,10 @@ handleCmdMob = (message, boss) => {
 	let mobsToCheck = boss ? getBosses() : mobs;
 	logger.info('handleCmdMob for (boss only: ' + boss + ') ' + mobName);
 	if (mobName === '') {
-		answer = 'List of all registered ' + (boss ? 'bosses' : 'monsters') + ':\n***' + Object.keys(mobsToCheck).join(', ') + '***'
+		let mobKeys = Object.keys(mobsToCheck);
+		answer = 'List of all ' + mobKeys.length + ' registered ' + (boss ? 'bosses' : 'monsters') + ':\n***' + mobKeys.join(', ') + '***'
 	} else {
+		mobName = capitalizeFirstLetters(mobName);
 		let mob = mobsToCheck[mobName];
 		if (mob === undefined) {
 			answer = (boss ? 'Boss' : 'Monster')  + ' ***' + mobName + '*** is unknown. Did you write it correctly?';
@@ -235,8 +240,10 @@ handleCmdItem = (message) => {
 	let options;
 	logger.info('handleCmdItem for ' + itemName);
 	if (itemName === '') {
-		answer = 'List of all registered items:\n***' + Object.keys(items).join('***, ***') + '***'
+		let itemKeys = Object.keys(items);
+		answer = 'List of all ' + itemKeys.length + ' registered items:\n***' + itemKeys.join('***, ***') + '***'
 	} else {
+		itemName = capitalizeFirstLetters(itemName);
 		let mobsWithItem = getMobsWithItem(itemName);
 		if (mobsWithItem === undefined) {
 			answer = 'Item ***' + itemName + '*** is unknown. Did you write it correctly?';
@@ -461,6 +468,7 @@ handleCmdMap = (message) => {
 	if (mapName === '') {
 		answer = 'List of all registered maps:\n***' + Object.keys(maps).join('***, ***') + '***'
 	} else {
+		mapName = capitalizeFirstLetters(mapName);
 		let map = maps[mapName];
 		if (map === undefined) {
 			answer = 'Map ***' + mapName + '*** is unknown. Did you write it correctly?';
@@ -508,6 +516,7 @@ handleCmdSkill = (message) => {
 			}
 		}
 	} else {
+		skillName = capitalizeFirstLetters(skillName);
 		let skill = skills[skillName];
 		if (skill === undefined) {
 			answer = 'Skill ***' + skillName + '*** is unknown. Did you write it correctly?';
