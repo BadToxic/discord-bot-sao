@@ -473,7 +473,7 @@ handleCmdSet = (message) => {
 			message.attachments.forEach(messageAttachment => {
 				attributeValue = messageAttachment.url;
 			});
-		} else if (attributeName === 'level' || attributeName === 'lv') {
+		} else if (attributeName === 'level' || attributeName === 'lv' || attributeName === 'lvl') {
 			sqlAttributeName = 'sao_level';
 		} else if (attributeName === 'id') {
 			sqlAttributeName = 'sao_id';

@@ -318,6 +318,44 @@
 		"weapon": "1H Rapier",
 		"stars": 4
    },
+   "Gracious": {
+        "person":"Asuna",
+		"weapon": "1H Rapier",
+		"stars": 3
+   },
+   "Crimson Smile": {
+        "person":"Asuna",
+		"weapon": "1H Rapier",
+		"stars": 3
+   },
+   "First Light": {
+        "person":"Asuna",
+		"weapon": "1H Rapier",
+		"stars": 1
+   },
+   "Tough Girl": {
+        "person":"Leafa",
+		"weapon": "1H Rapier",
+		"stars": 1
+   },
+   "Beaming Smile": {
+        "person":"Asuna",
+		"weapon": "1H Rapier",
+		"stars": 2,
+		"passive": true
+   },
+   "Melancholic": {
+        "person":"Asuna",
+		"weapon": "1H Rapier",
+		"stars": 2,
+		"passive": true
+   },
+   "Shrewd And Tricky": {
+        "person":"Ducker",
+		"weapon": "1H Rapier",
+		"stars": 2,
+		"passive": true
+   },
    "Azure Pursuit": {
         "person":"Sachi",
 		"weapon": "2H Spear",
@@ -383,6 +421,50 @@
 		"weapon": "2H Spear",
 		"stars": 4
    },
+   "Lively": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 3
+   },
+   "Be Brave": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 3
+   },
+   "Crimson Spear Girl": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 1
+   },
+   "Spear Pal": {
+        "person":"Sasamaru",
+		"weapon": "2H Spear",
+		"stars": 1
+   },
+   "Boisterous": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 2,
+		"passive": true
+   },
+   "Devoted": {
+        "person":"Sachi",
+		"weapon": "2H Spear",
+		"stars": 2,
+		"passive": true
+   },
+   "Young Challenger": {
+        "person":"Mina",
+		"weapon": "2H Spear",
+		"stars": 1,
+		"passive": true
+   },
+   "Kind Leader": {
+        "person":"Keita",
+		"weapon": "2H Spear",
+		"stars": 1,
+		"passive": true
+   },
    "Secret Dagger": {
         "person":"Silica",
 		"weapon": "Dagger",
@@ -418,6 +500,26 @@
 		"weapon": "Dagger",
 		"stars": 4
    },
+   "Strong Belief": {
+        "person":"Koharu",
+		"weapon": "Dagger",
+		"stars": 3
+   },
+   "Tranquil Spearhead": {
+        "person":"Mater",
+		"weapon": "Dagger",
+		"stars": 3
+   },
+   "Exiles Dagger": {
+        "person":"Lueur",
+		"weapon": "Dagger",
+		"stars": 3
+   },
+   "Pure And Naive": {
+        "person":"Koharu",
+		"weapon": "Dagger",
+		"stars": 1
+   },
    "Calm Archer": {
         "person":"Sinon",
 		"weapon": "Bow",
@@ -447,6 +549,21 @@
         "person":"Sinon",
 		"weapon": "Bow",
 		"stars": 4
+   },
+   "Silent Archer": {
+        "person":"Sinon",
+		"weapon": "Bow",
+		"stars": 3
+   },
+   "Flash Archer": {
+        "person":"Asuna",
+		"weapon": "Bow",
+		"stars": 3
+   },
+   "Bow Of Truth": {
+        "person":"Yuuki",
+		"weapon": "Bow",
+		"stars": 3
    },
    "Lady Style": {
         "person":"Lisbeth",
@@ -493,6 +610,61 @@
 		"weapon": "1H Club",
 		"stars": 4
    },
+   "Blacksmith Girl": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 3
+   },
+   "Spirited Mace": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 3
+   },
+   "Defencer": {
+        "person":"Liten",
+		"weapon": "1H Club",
+		"stars": 3
+   },
+   "Unmoveable": {
+        "person":"Tetsuo",
+		"weapon": "1H Club",
+		"stars": 1
+   },
+   "Craftman Pride": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 1
+   },
+   "Holy Feast": {
+        "person":"Kirito",
+		"weapon": "1H Club",
+		"stars": 4,
+		"passive": true
+   },
+   "Reliable Smith": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 2,
+		"passive": true
+   },
+   "Discerning": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 2,
+		"passive": true
+   },
+   "Recovery": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 1,
+		"passive": true
+   },
+   "Partner": {
+        "person":"Lisbeth",
+		"weapon": "1H Club",
+		"stars": 1,
+		"passive": true
+   },
    "Unbeatable": {
         "person":"Agil",
 		"weapon": "Shield",
@@ -502,6 +674,42 @@
         "person":"Kizmel",
 		"weapon": "Shield",
 		"stars": 4
+   },
+   "Determined": {
+        "person":"Kizmel",
+		"weapon": "Shield",
+		"stars": 2,
+		"passive": true
+   },
+   "Pioneer": {
+        "person":"Argo",
+		"weapon": "Shield",
+		"stars": 3,
+		"passive": true
+   },
+   "Committed": {
+        "person":"Argo",
+		"weapon": "Shield",
+		"stars": 2,
+		"passive": true
+   },
+   "Ecstatic": {
+        "person":"Argo",
+		"weapon": "Shield",
+		"stars": 3,
+		"passive": true
+   },
+   "Dauntless": {
+        "person":"Caine",
+		"weapon": "Shield",
+		"stars": 1,
+		"passive": true
+   },
+   "True Smile": {
+        "person":"Lisbeth",
+		"weapon": "Shield",
+		"stars": 1,
+		"passive": true
    },
    "Mischievous Eyes": {
         "person":"Leafa",
