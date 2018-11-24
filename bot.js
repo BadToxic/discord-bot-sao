@@ -14,7 +14,7 @@ const skills = require('./data/skills.json');
 
 const DISCORD_MESSAGE_MAX_LENGTH = 2000;
 
-const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv'];
+const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv', 'lvl'];
 
 const help = 
 'Notice: When using a command do not include "<" and ">".\n' +
