@@ -361,6 +361,13 @@ handleCmdPlayer = (message) => {
 		let options;
 		// playerID = playerID.replace(/[<@!>]/g, '');
 		// This can only be used when on same server:
+		
+		if (message.mentions.members === null) {
+				logger.info('Player not found in message. Cancel request.');
+				answer = 'Player not found in message. Is this a private chat?';
+				send(message, answer);
+				return;
+		}
 		const player = message.mentions.members.first();
 		/*bot.fetchUser(playerID).then(player => {
 			// Do some stuff with the user object.
@@ -380,7 +387,7 @@ handleCmdPlayer = (message) => {
 		const db = getDbClient();
 		db.connect(connectionErr => {
 			if (connectionErr) {
-				answer = 'Sorry, I could not connect to the database.'
+				answer = 'Sorry, I could not connect to the database.';
 				logger.info('Could not connect to database.');
 				logger.info(connectionErr);
 				send(message, answer);
