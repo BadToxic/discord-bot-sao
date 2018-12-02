@@ -329,25 +329,62 @@ handleCmdItem = (message) => {
 
 createProfileCard = (row) => {
 	return new Promise(function(resolve, reject) {
-		let topPromise = Jimp.read('./img/profile/profile-top.png');
-		let bottomPromise = Jimp.read('./img/profile/profile-bottom.png');
-		let headerPromise = Jimp.read('./img/profile/profile-header.png');
+		let topPromise = Jimp.read('./img/profile/profile-top.png');             // 498 x 88
+		let bottomPromise = Jimp.read('./img/profile/profile-bottom.png'); // 498 x 34
 		let fontPromise = Jimp.loadFont(fontPath);
 		
 		options = undefined;
+		const cancelCard = () {
+			if (row.sao_image) {
+				options = {files: [row.sao_image]};
+			}
+			resolve(options);
+		}
+		let promises = [topPromise, bottomPromise, fontPromise];	
 		if (row.sao_image) {
-			options = {files: [row.sao_image]};
+			promises.push(Jimp.read(row.sao_image));
 		}
 			
-		Promise.all([topPromise, bottomPromise, headerPromise]).then((values) => {
+		Promise.all(promises).then((values) => {
 			logger.info('Resolved all createProfileCard promises.');
-			resolve(options);
+			
+			let cardHeight = 256; // TODO: dynamic
+			let topHeight = 88;
+			let bottomHeight = 34;
+			
+			let card = new Jimp(498, cardHeight, (err, image) => {
+			    if (err) {
+					logger.info('Could not create image');
+					cancelCard();
+			    } else {
+					// Add header and footer
+					card.blit(topPromise, 0, 0);
+					card.blit(bottomPromise, 0, card.data.height - 34);
+					
+					// Print name
+					timezones.print(values[2], 82, 45, row.discord_name);
+					
+					// Add avatar
+					if (row.sao_image) {
+						let avatar = values[3];
+						let avatarHeight = cardHeight - topHeight - bottomHeight;
+						avatar.resize(Jimp.AUTO, avatarHeight); 
+						card.blit(avatar, 0, topHeight);
+					}
+		
+					// Save on server
+					timezones.write('./img/timezones-filled.jpg');
+					
+					resolve({files: ['./img/timezones-filled.jpg']});
+				}
+			});
+			
+			
 		}).catch(err => {
 			logger.info('Error while resolving profile card promises: ' + err);
 			// Only use the avatar image
-			resolve(options);
+			cancelCard();
 		});
-		
 	}); 
 };
 handleCmdPlayer = (message) => {
