@@ -347,10 +347,10 @@ createProfileCard = (row) => {
 			promises.push(Jimp.read('./img/profile/profile-sword.png'));     //    47 x 47
 		}
 		if (row.sao_id || row.sao_alt_id) {
-			// promises.push(Jimp.read('./img/profile/profile-id.png'));     //    47 x 47
+			promises.push(Jimp.read('./img/profile/profile-flag.png'));     //    47 x 47
 		}
 		if (row.sao_utc) {
-			// promises.push(Jimp.read('./img/profile/profile-utc.png'));     //    47 x 47
+			promises.push(Jimp.read('./img/profile/profile-map.png'));     //    47 x 47
 		}
 			
 		if (row.sao_image) {
@@ -390,8 +390,8 @@ createProfileCard = (row) => {
 					
 					let rowBackground = values[2];
 					let font = values[3];
-					let xIcon = card.bitmap.width - 50;
-					let xAttributes = card.bitmap.width - 54;
+					let xIcon = card.bitmap.width - 52;
+					let xAttributes = card.bitmap.width - 56;
 					let yIconOffset = 2;
 					let yTextOffset = 8;
 					
@@ -416,28 +416,32 @@ createProfileCard = (row) => {
 						}
 						
 						// Text
-						card.print(font, xAttributes, yRow + yTextOffset, {
+						card.print(font, xAttributes - 64, yRow + yTextOffset, {
 						    text: text, alignmentX: Jimp.HORIZONTAL_ALIGN_RIGHT, alignmentY: Jimp.VERTICAL_ALIGN_TOP
 						});
 						
 						yRow += rowHeight;
 					};
 					
+					let iconPromiseIndex = 4;
 					// Level
 					if (row.sao_level) {
-						createRow(values[4], 'Lv: ' + row.sao_level);
+						createRow(values[iconPromiseIndex++], 'Lv: ' + row.sao_level);
 						logger.info('Level added');
 					}
 					if (row.sao_id) {
-						createRow(undefined, 'ID: ' + row.sao_id);
+						createRow(values[iconPromiseIndex], 'ID: ' + row.sao_id);
+						if (!row.sao_alt_id) { // Would use the same icon
+							iconPromiseIndex++;
+						}
 						logger.info('ID added');
 					}
 					if (row.sao_alt_id) {
-						createRow(undefined, '2nd ID: ' + row.sao_alt_id);
+						createRow(values[iconPromiseIndex++], '2nd ID: ' + row.sao_alt_id);
 						logger.info('Alt ID added');
 					}
 					if (row.sao_utc) {
-						createRow(undefined, 'Timezone: UTC ' + (row.sao_utc > 0 ? '+' : '') + row.sao_utc);
+						createRow(values[iconPromiseIndex], 'Timezone: UTC ' + (row.sao_utc > 0 ? '+' : '') + row.sao_utc);
 						logger.info('UTC added');
 					}
 					
