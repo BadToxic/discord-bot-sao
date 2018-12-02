@@ -1,0 +1,12 @@
+{
+	"timezone": {
+		"rows": [
+			{"discord_name": "BadToxic", "utc": 2},
+			{"discord_name": "Long Name Right", "utc": 10},
+			{"discord_name": "Test", "utc": 6},
+			{"discord_name": "Very Right", "utc": 11},
+			{"discord_name": "Most Left", "utc": -12},
+			{"discord_name": "Long Name Left", "utc": -9}
+		]
+	}
+}

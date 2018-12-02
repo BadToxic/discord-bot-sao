@@ -12,13 +12,17 @@ const mobs = require('./data/mobs.json');
 const items = require('./data/items.json');
 const maps = require('./data/maps.json');
 const skills = require('./data/skills.json');
+const mocks = require('./data/mocks.json');
 
 const DISCORD_MESSAGE_MAX_LENGTH = 2000;
 
-const fontSize = 32;
-const fontSep = 8;
+const fontSize = 30;
+const fontSep = 4;
 const timeZoneWidth = 42;
-const fontPath = 'node_modules/@jimp/plugin-print/fonts/open-sans/open-sans-' + fontSize + '-black/open-sans-' + fontSize + '-black.fnt';
+// const fontPath = 'node_modules/@jimp/plugin-print/fonts/open-sans/open-sans-' + fontSize + '-black/open-sans-' + fontSize + '-black.fnt';
+const fontPath = 'fonts/sao-font-28-black.fnt';
+
+const useMock = false;
 
 const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv', 'lvl', 'time', 'timezone', 'utc'];
 
@@ -654,109 +658,122 @@ handleCmdMeme = (message) => {
 handleCmdGirl = (message) => {
 	sendRandomFile(message, './img/girls/');
 };
+createTimezoneMap = (timezones, font, result) => {
+
+	result.rows.sort((a, b) => (a.utc > b.utc) ? 1 : ((b.utc > a.utc) ? -1 : 0)); 
+
+	let middle = 505;
+	let y = 60;
+
+	function makeIteratorThatFillsWithColor(color) {
+		return function (x, y, offset) {
+			this.bitmap.data.writeUInt32BE(color, offset, true);
+		}
+	};
+	function lighten(x, y, idx) {
+		function bound(value) {
+			if (value > 255) {
+				return 255;
+			}
+			return value;
+		};
+		this.bitmap.data[idx] = bound(this.bitmap.data[idx] * 1.5);
+		this.bitmap.data[idx + 1] = bound(this.bitmap.data[idx + 1] * 1.5);
+		this.bitmap.data[idx + 2] = bound(this.bitmap.data[idx + 2] * 1.5);
+	};
+	
+	// Iterate all players that have a timezone
+	result.rows.forEach((row) => {
+		if (row.utc < -12) {
+			row.utc = -12;
+		} else if (row.utc > 12) {
+			row.utc = 12;
+		}
+		let x = middle + timeZoneWidth * row.utc;
+		if (x < 4) {
+			x = 4;
+		}
+		let xMarker = x - 6;
+		let text = row.discord_name.trim();
+		let width = Jimp.measureText(font, text);
+		
+		if (x + width >= timezones.bitmap.width - 4) {
+			x = timezones.bitmap.width - width - 4;
+		}
+		if (xMarker < 2) {
+			xMarker = 2;
+		}
+		
+		// Draw background rectangle
+		timezones.scan(x - 2, y, width + 2, fontSize, lighten);
+		
+		// Draw little marker
+		timezones.scan(xMarker, y - 4, 8, 8, makeIteratorThatFillsWithColor(0x0030a1df));
+		
+		// Print name
+		timezones.print(font, x, y, text);
+		
+		y += fontSize + fontSep;
+	});
+	
+	// Save on server
+	timezones.write('./img/timezones-filled.jpg');
+	
+	logger.info('Timezones fetched and image created.');
+	
+	return {
+		answer: 'Players with registered timezones:',
+		options: {
+			files: [
+				'./img/timezones-filled.jpg'
+			]
+		}
+	}
+}
 handleCmdTimezones = (message) => {
 	Jimp.read('./img/timezones.jpg', (err, timezones) => {
 		if (err) {
 			throw err;
 		}
-		Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(font => {
-			const db = getDbClient();
-			db.connect(connectionErr => {
-				if (connectionErr) {
-					answer = 'Sorry, I could not connect to the database.'
-					logger.info('Could not connect to database.');
-					logger.info(connectionErr);
-					send(message, answer);
-				} else {
-					const query = 'SELECT discord_name, utc FROM players WHERE utc IS NOT NULL;'
-					db.query(query, (err, result) => {
-						
-						let options = undefined;
-						
-						if (err) {
-							logger.info('Error on querry!');
-							logger.info(err);
-							answer = 'Error: No players found.';
-						} else if (result.rowCount === 0) {
-							answer = 'No players with timezone found.';
-						} else {
-						
-							/*let result = { // Mock data
-								rows: [
-									{discord_name: 'BadToxic', utc: 2},
-									{discord_name: 'Long Name Right', utc: 10},
-									{discord_name: 'Test', utc: 6},
-									{discord_name: 'Very Right', utc: 11},
-									{discord_name: 'Most Left', utc: -12},
-									{discord_name: 'Long Name Left', utc: -9}
-								]
-							}*/
-						
-							result.rows.sort((a, b) => (a.utc > b.utc) ? 1 : ((b.utc > a.utc) ? -1 : 0)); 
-						
-							let middle = 505;
-							let y = 64;
-						
-							answer = 'List of all registered players:\n***' + result.rows.map(row => row.discord_name.trim()).join('***, ***') + '***';
-			
-							function makeIteratorThatFillsWithColor(color) {
-							    return function (x, y, offset) {
-									this.bitmap.data.writeUInt32BE(color, offset, true);
-							    }
-							};
-							function lighten(x, y, idx) {
-								function bound(value) {
-								    if (value > 255) {
-										return 255;
-									}
-									return value;
-								};
-							    this.bitmap.data[idx] = bound(this.bitmap.data[idx] * 1.5);
-							    this.bitmap.data[idx + 1] = bound(this.bitmap.data[idx + 1] * 1.5);
-							    this.bitmap.data[idx + 2] = bound(this.bitmap.data[idx + 2] * 1.5);
-							};
+		Jimp.loadFont(fontPath).then(font => {
+			let mapResults;
+			if (useMock) { // Mock data
+				mapResults = createTimezoneMap(timezones, font, mocks.timezone);
+				answer = mapResults.answer;
+				options = mapResults.options;
+				send(message, answer, options);
+			} else {
+				const db = getDbClient();
+				db.connect(connectionErr => {
+					if (connectionErr) {
+						answer = 'Sorry, I could not connect to the database.'
+						logger.info('Could not connect to database.');
+						logger.info(connectionErr);
+						send(message, answer);
+					} else {
+						const query = 'SELECT discord_name, utc FROM players WHERE utc IS NOT NULL;'
+						db.query(query, (err, result) => {
 							
-							// Iterate all players that have a timezone
-							result.rows.forEach((row) => {
-								let x = middle + timeZoneWidth * row.utc;
-								let xMarker = x - 6;
-								let text = row.discord_name.trim();
-								let width = Jimp.measureText(font, text);
-								
-								if (x + width >= timezones.bitmap.width) {
-									x = timezones.bitmap.width - width;
-								}
-								if (xMarker < 0) {
-									xMarker = 0;
-								}
-								
-								// Draw background rectangle
-								timezones.scan(x - 2, y, width + 2, fontSize, lighten);
-								
-								// Draw little marker
-								timezones.scan(xMarker, y - 4, 8, 8, makeIteratorThatFillsWithColor(0x0030a1df));
-								
-								// Print name
-								timezones.print(font, x, y, text);
-								
-								y += fontSize + fontSep;
-							});
+							let options = undefined;
 							
-							// Save on server
-							timezones.write('./img/timezones-filled.jpg');
-							
-							options = {
-								files: [
-									'./img/timezones-filled.jpg'
-								]
+							if (err) {
+								logger.info('Error on querry!');
+								logger.info(err);
+								answer = 'Error: No players found.';
+							} else if (result.rowCount === 0) {
+								answer = 'No players with timezone found.';
+							} else {
+								const mapResults = createTimezoneMap(timezones, font, result);
+								
+								answer = mapResults.answer;
+								options = mapResults.options;
 							}
-							logger.info('Timezones fetched and image created.');
-						}
-						send(message, answer, options);
-						db.end();
-					});
-				}
-			});
+							send(message, answer, options);
+							db.end();
+						});
+					}
+				});
+			}
 		});
 	});
 };
