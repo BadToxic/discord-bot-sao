@@ -751,7 +751,7 @@ handleCmdTimezones = (message) => {
 						logger.info(connectionErr);
 						send(message, answer);
 					} else {
-						const query = 'SELECT discord_name, utc FROM players WHERE utc IS NOT NULL;'
+						const query = 'SELECT discord_name, utc, discord_id FROM players WHERE utc IS NOT NULL;'
 						db.query(query, (err, result) => {
 							
 							let options = undefined;
@@ -763,6 +763,12 @@ handleCmdTimezones = (message) => {
 							} else if (result.rowCount === 0) {
 								answer = 'No players with timezone found.';
 							} else {
+								// Search the user discord avatar urls
+								result.rows.forEach((row) => {
+									row.avatarUrl = bot.users.get(row.discord_id).avatarURL;
+									logger.info('Avatar for ' + row.discord_id + ': ' + row.avatarUrl);
+								});
+								
 								const mapResults = createTimezoneMap(timezones, font, result);
 								
 								answer = mapResults.answer;
