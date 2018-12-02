@@ -693,6 +693,10 @@ createTimezoneMap = (timezones, font, result) => {
 				.then((avatar) => {
 					logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
 					row.avatar = avatar;
+					logger.info(avatar);
+					return new Promise((resolve, reject) => { // (*)
+						resolve(avatar);
+					});
 				})
 				.catch(err => {
 					logger.info('Could not load user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
@@ -703,7 +707,7 @@ createTimezoneMap = (timezones, font, result) => {
 	});
 	let afterAvatarsLoadedCounter = 0;
 	const afterAvatarsLoaded = () => {
-		afterAvatarsLoadedCounter
+		afterAvatarsLoadedCounter++;
 		if (afterAvatarsLoadedCounter > 1) {
 			logger.info('!!! Called afterAvatarsLoaded again: ' + afterAvatarsLoadedCounter);
 			return;
