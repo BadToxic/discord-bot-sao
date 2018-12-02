@@ -327,6 +327,29 @@ handleCmdItem = (message) => {
 	send(message, answer, options);
 };
 
+createProfileCard = (row) => {
+	return new Promise(function(resolve, reject) {
+		let topPromise = Jimp.read('./img/profile/profile-top.png');
+		let bottomPromise = Jimp.read('./img/profile/profile-bottom.png');
+		let headerPromise = Jimp.read('./img/profile/profile-header.png');
+		let fontPromise = Jimp.loadFont(fontPath);
+		
+		options = undefined;
+		if (row.sao_image) {
+			options = {files: [row.sao_image]};
+		}
+			
+		Promise.all([topPromise, bottomPromise, headerPromise]).then((values) => {
+			logger.info('Resolved all createProfileCard promises.');
+			resolve(options);
+		}).catch(err => {
+			logger.info('Error while resolving profile card promises: ' + err);
+			// Only use the avatar image
+			resolve(options);
+		});
+		
+	}; 
+};
 handleCmdPlayer = (message) => {
     let args = message.content.substring(4).split(' ');
 	let playerID = args.splice(1, args.length - 1).join(' ');
@@ -419,11 +442,10 @@ handleCmdPlayer = (message) => {
 						if (row.utc) {
 							answer += 'Timezone: UTC ' + (row.utc >= 0 ? '+' : '') + row.utc + '\n';
 						}
-						if (row.sao_image) {
-							options = {files: [row.sao_image]};
-						}
+						createProfileCard(row).then((options) => {
+							send(message, answer, options);
+						});
 					}
-					send(message, answer, options);
 					db.end();
 				});
 			}
