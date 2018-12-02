@@ -756,7 +756,7 @@ createTimezoneMap = (timezones, font, result) => {
 	}).catch(err => {
 		logger.info('Error while resolving user discord avatars: ' + err);
 		afterAvatarsLoaded();
-	}));
+	});
 }
 handleCmdTimezones = (message) => {
 	Jimp.read('./img/timezones.jpg', (err, timezones) => {
