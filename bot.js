@@ -348,7 +348,7 @@ createProfileCard = (row) => {
 			resolve(options);
 		});
 		
-	}; 
+	}); 
 };
 handleCmdPlayer = (message) => {
     let args = message.content.substring(4).split(' ');
