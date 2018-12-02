@@ -376,8 +376,6 @@ createProfileCard = (row) => {
 			if (row.sao_utc) {
 				rowNumber++;
 			}
-			let xIcon = card.bitmap.width - 25;
-			let xAttributes = card.bitmap.width - 52;
 			
 			let cardHeight = topHeight + bottomHeight + rowNumber * rowHeight;
 			if (cardHeight < 256) {
@@ -392,6 +390,8 @@ createProfileCard = (row) => {
 					
 					let rowBackground = values[2];
 					let font = values[3];
+					let xIcon = card.bitmap.width - 25;
+					let xAttributes = card.bitmap.width - 52;
 					
 					// Add header and footer
 					card.blit(values[0], 0, 0);
@@ -414,16 +414,19 @@ createProfileCard = (row) => {
 					}
 					if (row.sao_id) {
 						card.blit(rowBackground, 0, yRow);
+						card.print(font, xAttributes, yRow + yTextOffset, 'ID: ' + row.sao_id);
 						yRow += rowHeight;
 						logger.info('ID added');
 					}
 					if (row.sao_alt_id) {
 						card.blit(rowBackground, 0, yRow);
+						card.print(font, xAttributes, yRow + yTextOffset, '2nd ID: ' + row.sao_alt_id);
 						yRow += rowHeight;
 						logger.info('Alt ID added');
 					}
 					if (row.sao_utc) {
 						card.blit(rowBackground, 0, yRow);
+						card.print(font, xAttributes, yRow + yTextOffset, 'Timezone: UTC ' + (row.sao_utc > 0 ? '+' : '') + row.sao_utc);
 						yRow += rowHeight;
 						logger.info('UTC added');
 					}
