@@ -392,9 +392,9 @@ createProfileCard = (row) => {
 					let rowBackground = values[2];
 					let font = values[3];
 					let xIcon = card.bitmap.width - 52;
-					let xAttributes = card.bitmap.width - 56;
+					let xAttributes = card.bitmap.width - 58;
 					let yIconOffset = 2;
-					let yTextOffset = 8;
+					let yTextOffset = 10;
 					
 					// Add header and footer
 					card.blit(values[0], 0, 0);
@@ -417,9 +417,9 @@ createProfileCard = (row) => {
 						}
 						
 						// Text
-						card.print(font, xAttributes, yRow + yTextOffset, text /*{
+						card.print(font, xAttributes, yRow + yTextOffset, {
 						    text: text, alignmentX: Jimp.HORIZONTAL_ALIGN_RIGHT, alignmentY: Jimp.VERTICAL_ALIGN_TOP
-						}*/);
+						}, xAttributes, rowHeight);
 						logger.info('text: ' + text);
 						
 						yRow += rowHeight;
