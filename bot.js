@@ -377,32 +377,37 @@ createProfileCard = (row) => {
 				rowNumber++;
 			}
 			let xIcon = card.bitmap.width - 25;
+			let xAttributes = card.bitmap.width - 52;
 			
 			let cardHeight = topHeight + bottomHeight + rowNumber * rowHeight;
 			if (cardHeight < 256) {
 				cardHeight = 256;
 			}
 			
-			let card = new Jimp(498, cardHeight, (err, image) => {
+			new Jimp(498, cardHeight, (err, card) => {
 			    if (err) {
 					logger.info('Could not create card image');
 					cancelCard();
 			    } else {
 					
+					let rowBackground = values[2];
+					let font = values[3];
+					
 					// Add header and footer
 					card.blit(values[0], 0, 0);
 					card.blit(values[1], 0, card.bitmap.height - bottomHeight);
+					logger.info('Top and Bottom added');
 					
 					// Print name
-					card.print(values[3], 82, 45, row.discord_name);
+					card.print(font, 82, 45, row.discord_name);
 					logger.info('Name added:' + row.discord_name);
 					
 					let yRow = topHeight;
-					let rowBackground = values[2];
 					// Level
 					if (row.sao_level) {
 						card.blit(rowBackground, 0, yRow);
 						card.blit(values[4], xIcon, yRow + rowHeight / 2); // Sword Icon
+						card.print(font, xAttributes, yRow + 4, 'Lv: ' + row.sao_level));
 						yRow += rowHeight;
 						logger.info('Level added');
 					}
@@ -421,7 +426,6 @@ createProfileCard = (row) => {
 						yRow += rowHeight;
 						logger.info('UTC added');
 					}
-					
 					
 					// Add avatar
 					if (row.sao_image) {
