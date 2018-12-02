@@ -706,6 +706,7 @@ createTimezoneMap = (timezones, font, result) => {
 					logger.info('Could not load user discord avatar for timezone map: ' + row.avatarUrl);
 					row.avatarUrl = undefined;
 				} else {
+					logger.info('Successfully loaded user discord avatar for timezone map: ' + row.avatarUrl);
 					width += avatarSize + 4;
 					row.avatar = avatar;
 				}
