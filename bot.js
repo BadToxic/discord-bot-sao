@@ -357,16 +357,16 @@ createProfileCard = (row) => {
 					logger.info('Could not create card image');
 					cancelCard();
 			    } else {
-					logger.info('Card mage created');
+					logger.info('Card image created');
 					// Add header and footer
 					card.blit(values[0], 0, 0);
 					logger.info('Top added');
-					card.blit(values[1], 0, card.bitmap.height - 34);
+					card.blit(values[1], 0, card.bitmap.height - bottomHeight);
 					logger.info('Bottom added');
 					
 					// Print name
-					timezones.print(values[2], 82, 45, row.discord_name);
-					logger.info('Name added');
+					card.print(values[2], 82, 45, row.discord_name);
+					logger.info('Name added:' + row.discord_name);
 					
 					// Add avatar
 					if (row.sao_image) {
@@ -378,9 +378,10 @@ createProfileCard = (row) => {
 					}
 		
 					// Save on server
-					timezones.write('./img/timezones-filled.jpg');
+					const cardPath = './img/card-' + row.discord_name + '.png';
+					card.write(cardPath);
 					
-					resolve({files: ['./img/timezones-filled.jpg']});
+					resolve({files: [cardPath]});
 				}
 			});
 		}).catch(err => {
