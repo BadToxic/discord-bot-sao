@@ -693,8 +693,7 @@ createTimezoneMap = (timezones, font, result) => {
 				.then((avatar) => {
 					logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
 					row.avatar = avatar;
-					logger.info(avatar);
-					return new Promise((resolve, reject) => { // (*)
+					return new Promise((resolve, reject) => {
 						resolve(avatar);
 					});
 				})
@@ -743,8 +742,9 @@ createTimezoneMap = (timezones, font, result) => {
 			
 			// Draw avatar 
 			if (row.avatar !== undefined) {
-				logger.info('Blit');
-				timezones.blit(avatar, x, y);
+				logger.info('Blit Before ' + text + ' (' + x + ', ' + y + ')');
+				timezones.blit(row.avatar, x, y);
+				logger.info('Blit After');
 				x += avatarSize + 4;
 			}
 			
