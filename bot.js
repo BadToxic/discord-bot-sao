@@ -331,6 +331,7 @@ createProfileCard = (row) => {
 	return new Promise(function(resolve, reject) {
 		let topPromise = Jimp.read('./img/profile/profile-top.png');             // 498 x 88
 		let bottomPromise = Jimp.read('./img/profile/profile-bottom.png'); // 498 x 34
+		let rowPromise = Jimp.read('./img/profile/profile-row.png');           // 498 x 54
 		let fontPromise = Jimp.loadFont(fontPath);
 		
 		options = undefined;
@@ -340,7 +341,18 @@ createProfileCard = (row) => {
 			}
 			resolve(options);
 		};
-		let promises = [topPromise, bottomPromise, fontPromise];	
+		let promises = [topPromise, bottomPromise, rowPromise, fontPromise];	
+		
+		if (row.sao_level) {
+			promises.push(Jimp.read('./img/profile/profile-sword.png'));     //    47 x 47
+		}
+		if (row.sao_id || row.sao_alt_id) {
+			// promises.push(Jimp.read('./img/profile/profile-id.png'));     //    47 x 47
+		}
+		if (row.sao_utc) {
+			// promises.push(Jimp.read('./img/profile/profile-utc.png'));     //    47 x 47
+		}
+			
 		if (row.sao_image) {
 			promises.push(Jimp.read(row.sao_image));
 		}
@@ -348,29 +360,72 @@ createProfileCard = (row) => {
 		Promise.all(promises).then((values) => {
 			logger.info('Resolved all createProfileCard promises.');
 			
-			let cardHeight = 256; // TODO: dynamic
 			let topHeight = 88;
 			let bottomHeight = 34;
+			let rowHeight = 54;
+			let rowNumber = 0;
+			if (row.sao_level) {
+				rowNumber++;
+			}
+			if (row.sao_id) {
+				rowNumber++;
+			}
+			if (row.sao_alt_id) {
+				rowNumber++;
+			}
+			if (row.sao_utc) {
+				rowNumber++;
+			}
+			let xIcon = card.bitmap.width - 25;
+			
+			let cardHeight = topHeight + bottomHeight + rowNumber * rowHeight;
+			if (cardHeight < 256) {
+				cardHeight = 256;
+			}
 			
 			let card = new Jimp(498, cardHeight, (err, image) => {
 			    if (err) {
 					logger.info('Could not create card image');
 					cancelCard();
 			    } else {
-					logger.info('Card image created');
+					
 					// Add header and footer
 					card.blit(values[0], 0, 0);
-					logger.info('Top added');
 					card.blit(values[1], 0, card.bitmap.height - bottomHeight);
-					logger.info('Bottom added');
 					
 					// Print name
-					card.print(values[2], 82, 45, row.discord_name);
+					card.print(values[3], 82, 45, row.discord_name);
 					logger.info('Name added:' + row.discord_name);
+					
+					let yRow = topHeight;
+					let rowBackground = values[2];
+					// Level
+					if (row.sao_level) {
+						card.blit(rowBackground, 0, yRow);
+						card.blit(values[4], xIcon, yRow + rowHeight / 2); // Sword Icon
+						yRow += rowHeight;
+						logger.info('Level added');
+					}
+					if (row.sao_id) {
+						card.blit(rowBackground, 0, yRow);
+						yRow += rowHeight;
+						logger.info('ID added');
+					}
+					if (row.sao_alt_id) {
+						card.blit(rowBackground, 0, yRow);
+						yRow += rowHeight;
+						logger.info('Alt ID added');
+					}
+					if (row.sao_utc) {
+						card.blit(rowBackground, 0, yRow);
+						yRow += rowHeight;
+						logger.info('UTC added');
+					}
+					
 					
 					// Add avatar
 					if (row.sao_image) {
-						let avatar = values[3];
+						let avatar = values[values.length - 1];
 						let avatarHeight = cardHeight - topHeight - bottomHeight;
 						avatar.resize(Jimp.AUTO, avatarHeight); 
 						card.blit(avatar, 0, topHeight);
