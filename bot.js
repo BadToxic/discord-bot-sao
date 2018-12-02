@@ -361,7 +361,7 @@ createProfileCard = (row) => {
 					// Add header and footer
 					card.blit(values[0], 0, 0);
 					logger.info('Top added');
-					card.blit(values[1], 0, card.data.height - 34);
+					card.blit(values[1], 0, card.bitmap.height - 34);
 					logger.info('Bottom added');
 					
 					// Print name
