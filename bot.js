@@ -403,11 +403,12 @@ createProfileCard = (row) => {
 					logger.info('Name added:' + row.discord_name);
 					
 					let yRow = topHeight;
+					let yTextOffset = 4;
 					// Level
 					if (row.sao_level) {
 						card.blit(rowBackground, 0, yRow);
 						card.blit(values[4], xIcon, yRow + rowHeight / 2); // Sword Icon
-						card.print(font, xAttributes, yRow + 4, 'Lv: ' + row.sao_level));
+						card.print(font, xAttributes, yRow + yTextOffset, 'Lv: ' + row.sao_level);
 						yRow += rowHeight;
 						logger.info('Level added');
 					}
