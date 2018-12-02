@@ -443,7 +443,7 @@ createProfileCard = (row) => {
 						logger.info('Alt ID added');
 					}
 					if (row.utc) {
-						createRow(values[iconPromiseIndex], 'Timezone: UTC ' + (row.sao_utc > 0 ? '+' : '') + row.sao_utc);
+						createRow(values[iconPromiseIndex], 'Timezone: UTC ' + (row.utc > 0 ? '+' : '') + row.utc);
 						logger.info('UTC added');
 					}
 					
