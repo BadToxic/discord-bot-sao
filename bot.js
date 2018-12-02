@@ -354,15 +354,19 @@ createProfileCard = (row) => {
 			
 			let card = new Jimp(498, cardHeight, (err, image) => {
 			    if (err) {
-					logger.info('Could not create image');
+					logger.info('Could not create card image');
 					cancelCard();
 			    } else {
+					logger.info('Card mage created');
 					// Add header and footer
-					card.blit(topPromise, 0, 0);
-					card.blit(bottomPromise, 0, card.data.height - 34);
+					card.blit(values[0], 0, 0);
+					logger.info('Top added');
+					card.blit(values[1], 0, card.data.height - 34);
+					logger.info('Bottom added');
 					
 					// Print name
 					timezones.print(values[2], 82, 45, row.discord_name);
+					logger.info('Name added');
 					
 					// Add avatar
 					if (row.sao_image) {
@@ -370,6 +374,7 @@ createProfileCard = (row) => {
 						let avatarHeight = cardHeight - topHeight - bottomHeight;
 						avatar.resize(Jimp.AUTO, avatarHeight); 
 						card.blit(avatar, 0, topHeight);
+						logger.info('Avatar added');
 					}
 		
 					// Save on server
@@ -378,8 +383,6 @@ createProfileCard = (row) => {
 					resolve({files: ['./img/timezones-filled.jpg']});
 				}
 			});
-			
-			
 		}).catch(err => {
 			logger.info('Error while resolving profile card promises: ' + err);
 			// Only use the avatar image
