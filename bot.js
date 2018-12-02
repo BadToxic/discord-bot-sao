@@ -701,7 +701,13 @@ createTimezoneMap = (timezones, font, result) => {
 			);
 		}
 	});
+	let afterAvatarsLoadedCounter = 0;
 	const afterAvatarsLoaded = () => {
+		afterAvatarsLoadedCounter
+		if (afterAvatarsLoadedCounter > 1) {
+			logger.info('!!! Called afterAvatarsLoaded again: ' + afterAvatarsLoadedCounter);
+			return;
+		}
 		logger.info('Called afterAvatarsLoaded');
 		result.rows.forEach((row) => {
 			if (row.utc < -12) {
@@ -754,7 +760,10 @@ createTimezoneMap = (timezones, font, result) => {
 		logger.info('Timezones fetched and image created.');
 	};
 	Promise.all(avatarPromises).then((values) => {
-		logger.info('Promise.all resolved.');
+		logger.info('Promise.all resolved:');
+		values.forEach((value) => {
+			logger.info('  value: ' + value);
+		});
 		afterAvatarsLoaded();
 	}).catch(err => {
 		logger.info('Error while resolving user discord avatars: ' + err);
