@@ -20,7 +20,7 @@ const fontSep = 8;
 const timeZoneWidth = 42;
 const fontPath = 'node_modules/@jimp/plugin-print/fonts/open-sans/open-sans-' + fontSize + '-black/open-sans-' + fontSize + '-black.fnt';
 
-const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv', 'lvl'];
+const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv', 'lvl', 'time', 'timezone', 'utc'];
 
 const help = 
 'Notice: When using a command do not include "<" and ">".\n' +
@@ -46,7 +46,8 @@ const help =
 '**sao [info, player, players]** <Username>  |  Asks for information about this user\n' +
 '**sao set [' + availablePlayerAttributes.join(', ') + ']** <value>  |  Sets the value for my own attribute\n' +
 '      If you choose to set your image you have to send it in the same message instead of a value.\n' +
-'**sao rank**  |  Lists all players sorted by their level\n\n' +
+'**sao rank**  |  Lists all players sorted by their level\n' +
+'**sao [time, timezone, timezones, utc]**  |  Get a map of the players\' timezones\n\n' +
 
 '***For Fun***\n' +
 '**sao [meme, memes]**  |  Get a random SAO meme\n' +
@@ -484,6 +485,8 @@ handleCmdSet = (message) => {
 			});
 		} else if (attributeName === 'level' || attributeName === 'lv' || attributeName === 'lvl') {
 			sqlAttributeName = 'sao_level';
+		}  else if (attributeName === 'time' || attributeName === 'timezone' || attributeName === 'utc') {
+			sqlAttributeName = 'utc';
 		} else if (attributeName === 'id') {
 			sqlAttributeName = 'sao_id';
 		} else if (attributeName === 'altid') {
@@ -509,7 +512,7 @@ handleCmdSet = (message) => {
 					if (err) {
 						logger.info('Error on querry!');
 						logger.info(err);
-						answer = 'Sorry ' + player.username + ', I failed to set ' + attributeName + '  = ' + attributeValue;
+						answer = 'Sorry ' + player.username + ', I failed to set ' + attributeName + ' = ' + attributeValue;
 					} else {
 						// logger.info('result:');
 						// logger.info(result);
@@ -830,6 +833,7 @@ bot.on('message', message => {
             case 'girls':
 				handleCmdGirl(message);
 				break;
+            case 'utc':
             case 'time':
             case 'timezone':
             case 'timezones':
