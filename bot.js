@@ -688,7 +688,7 @@ createTimezoneMap = (timezones, font, result) => {
 	result.rows.forEach((row) => {
 		if (row.avatarUrl !== undefined) {
 			row.avatarUrl += 'size=' + avatarSize;
-			avatarPromises.push(Jimp.read(row.avatarUrl).then(avatar => {
+			avatarPromises.push(Jimp.read(row.avatarUrl).then((avatar) => {
 				logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
 				row.avatar = avatar;
 				return avatar;
@@ -700,6 +700,7 @@ createTimezoneMap = (timezones, font, result) => {
 		}
 	});
 	Promise.all(avatarPromises).then(values => {
+		logger.info('Promise.all resolved.');
 		result.rows.forEach((row) => {
 			if (row.utc < -12) {
 				row.utc = -12;
@@ -741,22 +742,14 @@ createTimezoneMap = (timezones, font, result) => {
 			timezones.print(font, x, y, text);
 			
 			y += fontSize + fontSep;
-		})
+		});
+		
+		// Save on server
+		timezones.write('./img/timezones-filled.jpg');
+		const options = {files: ['./img/timezones-filled.jpg']}
+		send(message, answer, options);
+		logger.info('Timezones fetched and image created.');
 	});
-	
-	// Save on server
-	timezones.write('./img/timezones-filled.jpg');
-	
-	logger.info('Timezones fetched and image created.');
-	
-	return {
-		answer: 'Players with registered timezones:',
-		options: {
-			files: [
-				'./img/timezones-filled.jpg'
-			]
-		}
-	}
 }
 handleCmdTimezones = (message) => {
 	Jimp.read('./img/timezones.jpg', (err, timezones) => {
@@ -767,9 +760,6 @@ handleCmdTimezones = (message) => {
 			let mapResults;
 			if (useMock) { // Mock data
 				mapResults = createTimezoneMap(timezones, font, mocks.timezone);
-				answer = mapResults.answer;
-				options = mapResults.options;
-				send(message, answer, options);
 			} else {
 				const db = getDbClient();
 				db.connect(connectionErr => {
@@ -781,15 +771,14 @@ handleCmdTimezones = (message) => {
 					} else {
 						const query = 'SELECT discord_name, utc, discord_id FROM players WHERE utc IS NOT NULL;'
 						db.query(query, (err, result) => {
-							
-							let options = undefined;
-							
 							if (err) {
 								logger.info('Error on querry!');
 								logger.info(err);
 								answer = 'Error: No players found.';
+								send(message, answer);
 							} else if (result.rowCount === 0) {
 								answer = 'No players with timezone found.';
+								send(message, answer);
 							} else {
 								// Search the user discord avatar urls
 								result.rows.forEach((row) => {
@@ -797,12 +786,8 @@ handleCmdTimezones = (message) => {
 									row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
 								});
 								
-								const mapResults = createTimezoneMap(timezones, font, result);
-								
-								answer = mapResults.answer;
-								options = mapResults.options;
+								createTimezoneMap(timezones, font, result);
 							}
-							send(message, answer, options);
 							db.end();
 						});
 					}
