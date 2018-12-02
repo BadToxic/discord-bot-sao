@@ -390,8 +390,10 @@ createProfileCard = (row) => {
 					
 					let rowBackground = values[2];
 					let font = values[3];
-					let xIcon = card.bitmap.width - 25;
-					let xAttributes = card.bitmap.width - 52;
+					let xIcon = card.bitmap.width - 50;
+					let xAttributes = card.bitmap.width - 54;
+					let yIconOffset = 2;
+					let yTextOffset = 8;
 					
 					// Add header and footer
 					card.blit(values[0], 0, 0);
@@ -403,31 +405,39 @@ createProfileCard = (row) => {
 					logger.info('Name added:' + row.discord_name);
 					
 					let yRow = topHeight;
-					let yTextOffset = 4;
+					
+					const createRow = (icon, text) => {
+						// Background
+						card.blit(rowBackground, 0, yRow);
+						
+						// Icon
+						if (icon) {
+							card.blit(icon, xIcon, yRow + yIconOffset);
+						}
+						
+						// Text
+						card.print(font, xAttributes, yRow + yTextOffset, {
+						    text: text, alignmentX: Jimp.HORIZONTAL_ALIGN_RIGHT, alignmentY: Jimp.VERTICAL_ALIGN_TOP
+						});
+						
+						yRow += rowHeight;
+					};
+					
 					// Level
 					if (row.sao_level) {
-						card.blit(rowBackground, 0, yRow);
-						card.blit(values[4], xIcon, yRow + rowHeight / 2); // Sword Icon
-						card.print(font, xAttributes, yRow + yTextOffset, 'Lv: ' + row.sao_level);
-						yRow += rowHeight;
+						createRow(values[4], 'Lv: ' + row.sao_level);
 						logger.info('Level added');
 					}
 					if (row.sao_id) {
-						card.blit(rowBackground, 0, yRow);
-						card.print(font, xAttributes, yRow + yTextOffset, 'ID: ' + row.sao_id);
-						yRow += rowHeight;
+						createRow(undefined, 'ID: ' + row.sao_id);
 						logger.info('ID added');
 					}
 					if (row.sao_alt_id) {
-						card.blit(rowBackground, 0, yRow);
-						card.print(font, xAttributes, yRow + yTextOffset, '2nd ID: ' + row.sao_alt_id);
-						yRow += rowHeight;
+						createRow(undefined, '2nd ID: ' + row.sao_alt_id);
 						logger.info('Alt ID added');
 					}
 					if (row.sao_utc) {
-						card.blit(rowBackground, 0, yRow);
-						card.print(font, xAttributes, yRow + yTextOffset, 'Timezone: UTC ' + (row.sao_utc > 0 ? '+' : '') + row.sao_utc);
-						yRow += rowHeight;
+						createRow(undefined, 'Timezone: UTC ' + (row.sao_utc > 0 ? '+' : '') + row.sao_utc);
 						logger.info('UTC added');
 					}
 					
