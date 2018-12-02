@@ -658,8 +658,7 @@ handleCmdMeme = (message) => {
 handleCmdGirl = (message) => {
 	sendRandomFile(message, './img/girls/');
 };
-createTimezoneMap = (timezones, font, result) => {
-	logger.info('Called createTimezoneMap');
+createTimezoneMap = (message, timezones, font, result) => {
 
 	result.rows.sort((a, b) => (a.utc > b.utc) ? 1 : ((b.utc > a.utc) ? -1 : 0)); 
 
@@ -742,9 +741,8 @@ createTimezoneMap = (timezones, font, result) => {
 			
 			// Draw avatar 
 			if (row.avatar !== undefined) {
-				logger.info('Blit Before ' + text + ' (' + x + ', ' + y + ')');
+				// logger.info('Before Blit ' + text + ' (' + x + ', ' + y + ')');
 				timezones.blit(row.avatar, x, y);
-				logger.info('Blit After');
 				x += avatarSize + 4;
 			}
 			
@@ -759,15 +757,15 @@ createTimezoneMap = (timezones, font, result) => {
 		
 		// Save on server
 		timezones.write('./img/timezones-filled.jpg');
-		const options = {files: ['./img/timezones-filled.jpg']}
-		send(message, answer, options);
-		logger.info('Timezones fetched and image created.');
+		
+		send(message, 'Players with registered timezones:', {files: ['./img/timezones-filled.jpg']});
+		logger.info('Timezones and users with avatars fetched and image created.');
 	};
 	Promise.all(avatarPromises).then((values) => {
-		logger.info('Promise.all resolved:');
-		values.forEach((value) => {
+		logger.info('Promise.all resolved');
+		/*values.forEach((value) => {
 			logger.info('  value: ' + value);
-		});
+		});*/
 		afterAvatarsLoaded();
 	}).catch(err => {
 		logger.info('Error while resolving user discord avatars: ' + err);
@@ -782,7 +780,7 @@ handleCmdTimezones = (message) => {
 		Jimp.loadFont(fontPath).then(font => {
 			let mapResults;
 			if (useMock) { // Mock data
-				mapResults = createTimezoneMap(timezones, font, mocks.timezone);
+				mapResults = createTimezoneMap(message, timezones, font, mocks.timezone);
 			} else {
 				const db = getDbClient();
 				db.connect(connectionErr => {
@@ -809,7 +807,7 @@ handleCmdTimezones = (message) => {
 									row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
 								});
 								
-								createTimezoneMap(timezones, font, result);
+								createTimezoneMap(message, timezones, font, result);
 							}
 							db.end();
 						});
