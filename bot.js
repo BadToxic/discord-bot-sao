@@ -684,58 +684,64 @@ createTimezoneMap = (timezones, font, result) => {
 	};
 	
 	// Iterate all players that have a timezone
+	let avatarPromises = [];
 	result.rows.forEach((row) => {
-		if (row.utc < -12) {
-			row.utc = -12;
-		} else if (row.utc > 12) {
-			row.utc = 12;
-		}
-		let x = middle + timeZoneWidth * row.utc;
-		if (x < 4) {
-			x = 4;
-		}
-		let xMarker = x - 6;
-		let text = row.discord_name.trim();
-		let width = Jimp.measureText(font, text);
-		
 		if (row.avatarUrl !== undefined) {
 			row.avatarUrl += 'size=' + avatarSize;
-			logger.info('Avatar for ' + row.discord_id + ': ' + row.avatarUrl);
-			Jimp.read(row.avatarUrl, (err, avatar) => {
-				if (err) {
-					logger.info('Could not load user discord avatar for timezone map: ' + row.avatarUrl);
-					row.avatarUrl = undefined;
-				} else {
-					logger.info('Successfully loaded user discord avatar for timezone map: ' + row.avatarUrl);
-					width += avatarSize + 4;
-					row.avatar = avatar;
-				}
-			});
+			avatarPromises.push(Jimp.read(row.avatarUrl).then(avatar => {
+				logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+				row.avatar = avatar;
+				return avatar;
+			})
+			.catch(err => {
+				logger.info('Could not load user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+				row.avatarUrl = undefined;
+			}));
 		}
-		
-		if (x + width >= timezones.bitmap.width - 4) {
-			x = timezones.bitmap.width - width - 4;
-		}
-		if (xMarker < 2) {
-			xMarker = 2;
-		}
-		
-		// Draw background rectangle
-		timezones.scan(x - 2, y, width + 2, fontSize, lighten);
-		
-		// Draw avatar 
-		if (row.avatar !== undefined) {
-			timezones.blit(avatar, x, y);
-			x += avatarSize + 4;
-		}
-		
-		// Draw little marker
-		timezones.scan(xMarker, y - 4, 8, 8, makeIteratorThatFillsWithColor(0x0030a1df));
-		
-		// Print name
-		timezones.print(font, x, y, text);
-		
-		y += fontSize + fontSep;
+	});
+	Promise.all(avatarPromises).then(values => {
+		result.rows.forEach((row) => {
+			if (row.utc < -12) {
+				row.utc = -12;
+			} else if (row.utc > 12) {
+				row.utc = 12;
+			}
+			let x = middle + timeZoneWidth * row.utc;
+			if (x < 4) {
+				x = 4;
+			}
+			let xMarker = x - 6;
+			let text = row.discord_name.trim();
+			let width = Jimp.measureText(font, text);
+			
+			if (row.avatar !== undefined) {
+				width += avatarSize + 4;
+			}
+			
+			if (x + width >= timezones.bitmap.width - 4) {
+				x = timezones.bitmap.width - width - 4;
+			}
+			if (xMarker < 2) {
+				xMarker = 2;
+			}
+			
+			// Draw background rectangle
+			timezones.scan(x - 2, y, width + 2, fontSize, lighten);
+			
+			// Draw avatar 
+			if (row.avatar !== undefined) {
+				timezones.blit(avatar, x, y);
+				x += avatarSize + 4;
+			}
+			
+			// Draw little marker
+			timezones.scan(xMarker, y - 4, 8, 8, makeIteratorThatFillsWithColor(0x0030a1df));
+			
+			// Print name
+			timezones.print(font, x, y, text);
+			
+			y += fontSize + fontSep;
+		})
 	});
 	
 	// Save on server
