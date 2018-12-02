@@ -349,7 +349,7 @@ createProfileCard = (row) => {
 		if (row.sao_id || row.sao_alt_id) {
 			promises.push(Jimp.read('./img/profile/profile-flag.png'));     //    47 x 47
 		}
-		if (row.sao_utc) {
+		if (row.utc) {
 			promises.push(Jimp.read('./img/profile/profile-map.png'));     //    47 x 47
 		}
 			
@@ -373,11 +373,12 @@ createProfileCard = (row) => {
 			if (row.sao_alt_id) {
 				rowNumber++;
 			}
-			if (row.sao_utc) {
+			if (row.utc) {
 				rowNumber++;
 			}
 			
 			let cardHeight = topHeight + bottomHeight + rowNumber * rowHeight;
+			logger.info('Calculated cardHeight: ' + cardHeight);
 			if (cardHeight < 256) {
 				cardHeight = 256;
 			}
@@ -416,9 +417,10 @@ createProfileCard = (row) => {
 						}
 						
 						// Text
-						card.print(font, xAttributes - 64, yRow + yTextOffset, {
+						card.print(font, xAttributes, yRow + yTextOffset, text /*{
 						    text: text, alignmentX: Jimp.HORIZONTAL_ALIGN_RIGHT, alignmentY: Jimp.VERTICAL_ALIGN_TOP
-						});
+						}*/);
+						logger.info('text: ' + text);
 						
 						yRow += rowHeight;
 					};
@@ -440,7 +442,7 @@ createProfileCard = (row) => {
 						createRow(values[iconPromiseIndex++], '2nd ID: ' + row.sao_alt_id);
 						logger.info('Alt ID added');
 					}
-					if (row.sao_utc) {
+					if (row.utc) {
 						createRow(values[iconPromiseIndex], 'Timezone: UTC ' + (row.sao_utc > 0 ? '+' : '') + row.sao_utc);
 						logger.info('UTC added');
 					}
