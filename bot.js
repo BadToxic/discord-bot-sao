@@ -697,6 +697,10 @@ createTimezoneMap = (timezones, font, result) => {
 		let text = row.discord_name.trim();
 		let width = Jimp.measureText(font, text);
 		
+		if (row.avatarUrl !== undefined) {
+			
+		}
+		
 		if (x + width >= timezones.bitmap.width - 4) {
 			x = timezones.bitmap.width - width - 4;
 		}
@@ -766,6 +770,7 @@ handleCmdTimezones = (message) => {
 								// Search the user discord avatar urls
 								result.rows.forEach((row) => {
 									row.avatarUrl = bot.users.get(row.discord_id).avatarURL;
+									row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '') + 'size=' + fontSize;
 									logger.info('Avatar for ' + row.discord_id + ': ' + row.avatarUrl);
 								});
 								
