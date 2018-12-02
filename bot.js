@@ -699,7 +699,7 @@ createTimezoneMap = (timezones, font, result) => {
 			}));
 		}
 	});
-	Promise.all(avatarPromises).then(values => {
+	const afterAvatarsLoaded = () => {
 		logger.info('Promise.all resolved.');
 		result.rows.forEach((row) => {
 			if (row.utc < -12) {
@@ -749,7 +749,14 @@ createTimezoneMap = (timezones, font, result) => {
 		const options = {files: ['./img/timezones-filled.jpg']}
 		send(message, answer, options);
 		logger.info('Timezones fetched and image created.');
-	});
+	};
+	Promise.all(avatarPromises).then(values => {
+		logger.info('Promise.all resolved.');
+		afterAvatarsLoaded();
+	}).catch(err => {
+		logger.info('Error while resolving user discord avatars: ' + err);
+		afterAvatarsLoaded();
+	}));
 }
 handleCmdTimezones = (message) => {
 	Jimp.read('./img/timezones.jpg', (err, timezones) => {
