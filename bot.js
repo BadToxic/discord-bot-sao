@@ -664,6 +664,7 @@ createTimezoneMap = (timezones, font, result) => {
 
 	let middle = 505;
 	let y = 60;
+	let avatarSize = 32;
 
 	function makeIteratorThatFillsWithColor(color) {
 		return function (x, y, offset) {
@@ -698,7 +699,17 @@ createTimezoneMap = (timezones, font, result) => {
 		let width = Jimp.measureText(font, text);
 		
 		if (row.avatarUrl !== undefined) {
-			
+			row.avatarUrl += 'size=' + avatarSize;
+			logger.info('Avatar for ' + row.discord_id + ': ' + row.avatarUrl);
+			Jimp.read(row.avatarUrl, (err, avatar) => {
+				if (err) {
+					logger.info('Could not load user discord avatar for timezone map: ' + row.avatarUrl);
+					row.avatarUrl = undefined;
+				} else {
+					width += avatarSize + 4;
+					row.avatar = avatar;
+				}
+			});
 		}
 		
 		if (x + width >= timezones.bitmap.width - 4) {
@@ -710,6 +721,12 @@ createTimezoneMap = (timezones, font, result) => {
 		
 		// Draw background rectangle
 		timezones.scan(x - 2, y, width + 2, fontSize, lighten);
+		
+		// Draw avatar 
+		if (row.avatar !== undefined) {
+			timezones.blit(avatar, x, y);
+			x += avatarSize + 4;
+		}
 		
 		// Draw little marker
 		timezones.scan(xMarker, y - 4, 8, 8, makeIteratorThatFillsWithColor(0x0030a1df));
@@ -770,8 +787,7 @@ handleCmdTimezones = (message) => {
 								// Search the user discord avatar urls
 								result.rows.forEach((row) => {
 									row.avatarUrl = bot.users.get(row.discord_id).avatarURL;
-									row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '') + 'size=' + fontSize;
-									logger.info('Avatar for ' + row.discord_id + ': ' + row.avatarUrl);
+									row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
 								});
 								
 								const mapResults = createTimezoneMap(timezones, font, result);
