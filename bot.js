@@ -690,7 +690,7 @@ createTimezoneMap = (message, timezones, font, result) => {
 			row.avatarUrl += 'size=' + avatarSize;
 			avatarPromises.push(Jimp.read(row.avatarUrl)
 				.then((avatar) => {
-					logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+					// logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
 					row.avatar = avatar;
 					return new Promise((resolve, reject) => {
 						resolve(avatar);
@@ -707,10 +707,10 @@ createTimezoneMap = (message, timezones, font, result) => {
 	const afterAvatarsLoaded = () => {
 		afterAvatarsLoadedCounter++;
 		if (afterAvatarsLoadedCounter > 1) {
-			logger.info('!!! Called afterAvatarsLoaded again: ' + afterAvatarsLoadedCounter);
+			logger.info('Called afterAvatarsLoaded again: ' + afterAvatarsLoadedCounter);
 			return;
 		}
-		logger.info('Called afterAvatarsLoaded');
+		// logger.info('Called afterAvatarsLoaded');
 		result.rows.forEach((row) => {
 			if (row.utc < -12) {
 				row.utc = -12;
@@ -718,31 +718,41 @@ createTimezoneMap = (message, timezones, font, result) => {
 				row.utc = 12;
 			}
 			let x = middle + timeZoneWidth * row.utc;
+			let xName;
 			if (x < 4) {
 				x = 4;
 			}
 			let xMarker = x - 6;
 			let text = row.discord_name.trim();
-			let width = Jimp.measureText(font, text);
+			let widthName = Jimp.measureText(font, text);
+			let widthTotal;
 			
 			if (row.avatar !== undefined) {
-				width += avatarSize + 4;
+				widthTotal = widthName + avatarSize + 4;
+			} else {
+				widthTotal = widthName;
 			}
 			
-			if (x + width >= timezones.bitmap.width - 4) {
-				x = timezones.bitmap.width - width - 4;
+			if (x + widthTotal >= timezones.bitmap.width - 4) {
+				x = timezones.bitmap.width - widthTotal - 4;
 			}
 			if (xMarker < 2) {
 				xMarker = 2;
 			}
 			
+			if (row.avatar !== undefined) {
+				xName = x + avatarSize + 4;
+			} else {
+				xName = x;
+			}
+			
 			// Draw background rectangle
-			timezones.scan(x - 2, y, width + 2, fontSize, lighten);
+			timezones.scan(xName - 2, y, widthName + 2, fontSize, lighten);
 			
 			// Draw avatar 
 			if (row.avatar !== undefined) {
 				// logger.info('Before Blit ' + text + ' (' + x + ', ' + y + ')');
-				timezones.blit(row.avatar, x, y);
+				timezones.blit(row.avatar, x, y - 1);
 				x += avatarSize + 4;
 			}
 			
@@ -750,7 +760,7 @@ createTimezoneMap = (message, timezones, font, result) => {
 			timezones.scan(xMarker, y - 4, 8, 8, makeIteratorThatFillsWithColor(0x0030a1df));
 			
 			// Print name
-			timezones.print(font, x, y, text);
+			timezones.print(font, xName, y, text);
 			
 			y += fontSize + fontSep;
 		});
@@ -762,10 +772,6 @@ createTimezoneMap = (message, timezones, font, result) => {
 		logger.info('Timezones and users with avatars fetched and image created.');
 	};
 	Promise.all(avatarPromises).then((values) => {
-		logger.info('Promise.all resolved');
-		/*values.forEach((value) => {
-			logger.info('  value: ' + value);
-		});*/
 		afterAvatarsLoaded();
 	}).catch(err => {
 		logger.info('Error while resolving user discord avatars: ' + err);
