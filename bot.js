@@ -334,12 +334,12 @@ createProfileCard = (row) => {
 		let fontPromise = Jimp.loadFont(fontPath);
 		
 		options = undefined;
-		const cancelCard = () {
+		const cancelCard = () => {
 			if (row.sao_image) {
 				options = {files: [row.sao_image]};
 			}
 			resolve(options);
-		}
+		};
 		let promises = [topPromise, bottomPromise, fontPromise];	
 		if (row.sao_image) {
 			promises.push(Jimp.read(row.sao_image));
