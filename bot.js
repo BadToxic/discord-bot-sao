@@ -659,6 +659,7 @@ handleCmdGirl = (message) => {
 	sendRandomFile(message, './img/girls/');
 };
 createTimezoneMap = (timezones, font, result) => {
+	logger.info('Called createTimezoneMap');
 
 	result.rows.sort((a, b) => (a.utc > b.utc) ? 1 : ((b.utc > a.utc) ? -1 : 0)); 
 
@@ -688,21 +689,20 @@ createTimezoneMap = (timezones, font, result) => {
 	result.rows.forEach((row) => {
 		if (row.avatarUrl !== undefined) {
 			row.avatarUrl += 'size=' + avatarSize;
-			avatarPromises.push(Jimp.read(row.avatarUrl).then((avatar) => {
-				logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
-				if (avatar === undefined) {
-					logger.info('avatar is undefined!');
-				}
-				row.avatar = avatar;
-				// return avatar;
-			})
-			.catch(err => {
-				logger.info('Could not load user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
-				row.avatarUrl = undefined;
-			}));
+			avatarPromises.push(Jimp.read(row.avatarUrl)
+				.then((avatar) => {
+					logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+					row.avatar = avatar;
+				})
+				.catch(err => {
+					logger.info('Could not load user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+					row.avatarUrl = undefined;
+				})
+			);
 		}
 	});
 	const afterAvatarsLoaded = () => {
+		logger.info('Called afterAvatarsLoaded');
 		result.rows.forEach((row) => {
 			if (row.utc < -12) {
 				row.utc = -12;
@@ -733,6 +733,7 @@ createTimezoneMap = (timezones, font, result) => {
 			
 			// Draw avatar 
 			if (row.avatar !== undefined) {
+				logger.info('Blit');
 				timezones.blit(avatar, x, y);
 				x += avatarSize + 4;
 			}
@@ -752,7 +753,7 @@ createTimezoneMap = (timezones, font, result) => {
 		send(message, answer, options);
 		logger.info('Timezones fetched and image created.');
 	};
-	Promise.all(avatarPromises).then(values => {
+	Promise.all(avatarPromises).then((values) => {
 		logger.info('Promise.all resolved.');
 		afterAvatarsLoaded();
 	}).catch(err => {
