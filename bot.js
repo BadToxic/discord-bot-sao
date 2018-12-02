@@ -417,9 +417,9 @@ createProfileCard = (row) => {
 						}
 						
 						// Text
-						card.print(font, xAttributes, yRow + yTextOffset, {
+						card.print(font, xAttributes - Jimp.measureText(font, text), yRow + yTextOffset, text/*{
 						    text: text, alignmentX: Jimp.HORIZONTAL_ALIGN_RIGHT, alignmentY: Jimp.VERTICAL_ALIGN_TOP
-						}, xAttributes, rowHeight);
+						}, xAttributes, rowHeight*/);
 						logger.info('text: ' + text);
 						
 						yRow += rowHeight;
