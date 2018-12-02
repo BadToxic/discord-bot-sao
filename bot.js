@@ -690,8 +690,11 @@ createTimezoneMap = (timezones, font, result) => {
 			row.avatarUrl += 'size=' + avatarSize;
 			avatarPromises.push(Jimp.read(row.avatarUrl).then((avatar) => {
 				logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+				if (avatar === undefined) {
+					logger.info('avatar is undefined!');
+				}
 				row.avatar = avatar;
-				return avatar;
+				// return avatar;
 			})
 			.catch(err => {
 				logger.info('Could not load user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
@@ -700,7 +703,6 @@ createTimezoneMap = (timezones, font, result) => {
 		}
 	});
 	const afterAvatarsLoaded = () => {
-		logger.info('Promise.all resolved.');
 		result.rows.forEach((row) => {
 			if (row.utc < -12) {
 				row.utc = -12;
