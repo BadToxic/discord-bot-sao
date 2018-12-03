@@ -129,6 +129,23 @@ getBosses = () => {
 	return bosses;
 };
 
+makeIteratorThatFillsWithColor = (color) => {
+	return function (x, y, offset) {
+		this.bitmap.data.writeUInt32BE(color, offset, true);
+	}
+};
+lighten = (x, y, idx) => {
+	function bound(value) {
+		if (value > 255) {
+			return 255;
+		}
+		return value;
+	};
+	this.bitmap.data[idx] = bound(this.bitmap.data[idx] * 1.5);
+	this.bitmap.data[idx + 1] = bound(this.bitmap.data[idx + 1] * 1.5);
+	this.bitmap.data[idx + 2] = bound(this.bitmap.data[idx + 2] * 1.5);
+};
+
 getMobsWithItem = (itemName) => {
 	let mobsWithItem = {};
 	let foundMobs = false;
@@ -377,7 +394,8 @@ createProfileCard = (row) => {
 				rowNumber++;
 			}
 			
-			let cardHeight = topHeight + bottomHeight + rowNumber * rowHeight;
+			const totalRowHeight = rowNumber * rowHeight;
+			let cardHeight = topHeight + bottomHeight + totalRowHeight;
 			logger.info('Calculated cardHeight: ' + cardHeight);
 			if (cardHeight < 256) {
 				cardHeight = 256;
@@ -400,6 +418,11 @@ createProfileCard = (row) => {
 					card.blit(values[0], 0, 0);
 					card.blit(values[1], 0, card.bitmap.height - bottomHeight);
 					logger.info('Top and Bottom added');
+					
+					if (topHeight + totalRowHeight + bottomHeight < cardHeight) {
+						// Background
+						card.scan(0, topHeight + totalRowHeight, card.bitmap.width, cardHeight - topHeight - totalRowHeight - bottomHeight, makeIteratorThatFillsWithColor(0x00ffffff));
+					}
 					
 					// Print name
 					card.print(font, 82, 45, row.discord_name);
@@ -451,8 +474,12 @@ createProfileCard = (row) => {
 					if (row.sao_image) {
 						let avatar = values[values.length - 1];
 						let avatarHeight = cardHeight - topHeight - bottomHeight;
-						avatar.resize(Jimp.AUTO, avatarHeight); 
-						card.blit(avatar, 0, topHeight);
+						avatar.resize(Jimp.AUTO, avatarHeight);
+						let xAvatar = 0;
+						if (avatar.bitmap.width < 140) {
+							xAvatar = 70 - avatar.bitmap.width / 2;
+						}
+						card.blit(avatar, xAvatar, topHeight);
 						logger.info('Avatar added');
 					}
 		
@@ -814,23 +841,6 @@ createTimezoneMap = (message, timezones, font, result) => {
 	let middle = 505;
 	let y = 60;
 	let avatarSize = 32;
-
-	function makeIteratorThatFillsWithColor(color) {
-		return function (x, y, offset) {
-			this.bitmap.data.writeUInt32BE(color, offset, true);
-		}
-	};
-	function lighten(x, y, idx) {
-		function bound(value) {
-			if (value > 255) {
-				return 255;
-			}
-			return value;
-		};
-		this.bitmap.data[idx] = bound(this.bitmap.data[idx] * 1.5);
-		this.bitmap.data[idx + 1] = bound(this.bitmap.data[idx + 1] * 1.5);
-		this.bitmap.data[idx + 2] = bound(this.bitmap.data[idx + 2] * 1.5);
-	};
 	
 	// Iterate all players that have a timezone
 	let avatarPromises = [];
