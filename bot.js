@@ -465,7 +465,7 @@ createRankList = (rows) => {
 		});
 		
 	};
-	Promise.all(avatarPromises).then((values) => {
+	return Promise.all(avatarPromises).then((values) => {
 		afterAvatarsLoaded();
 	}).catch(err => {
 		logger.info('Error while resolving user discord avatars: ' + err);
