@@ -746,10 +746,10 @@ handleCmdRank = (message) => {
 						player.rank = rank;
 						answer += (rank++) + '. **' + player.discord_name + '** (level **' + player.sao_level + '**)\n';
 					});
-				}
 				
-				// Search the user discord avatar urls
-				getUserAvatarUrls(result.rows);
+					// Search the user discord avatar urls
+					getUserAvatarUrls(result.rows);
+				}
 				
 				createRankList(result.rows).then((options) => {
 					send(message, answer, options);
@@ -970,7 +970,7 @@ createTimezoneMap = (message, timezones, font, result) => {
 	let avatarSize = 32;
 	
 	// Iterate all players that have a timezone
-	let avatarPromises = loadUserAvatars(rows, avatarSize);
+	let avatarPromises = loadUserAvatars(result.rows, avatarSize);
 	
 	let afterAvatarsLoadedCounter = 0;
 	const afterAvatarsLoaded = () => {
@@ -1053,6 +1053,7 @@ createTimezoneMap = (message, timezones, font, result) => {
 };
 getUserAvatarUrls = (rows) => {
 	rows.forEach((row) => {
+		logger.info('getUserAvatarUrls: row.discord_id: ' + row.discord_id);
 		row.avatarUrl = bot.users.get(row.discord_id).avatarURL;
 		if (row.avatarUrl === null) {
 			row.avatarUrl = undefined;
