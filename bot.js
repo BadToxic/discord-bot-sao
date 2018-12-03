@@ -397,8 +397,8 @@ createProfileCard = (row) => {
 			const totalRowHeight = rowNumber * rowHeight;
 			let cardHeight = topHeight + bottomHeight + totalRowHeight;
 			logger.info('Calculated cardHeight: ' + cardHeight);
-			if (cardHeight < 256) {
-				cardHeight = 256;
+			if (cardHeight < 284) {
+				cardHeight = 284;
 			}
 			
 			new Jimp(498, cardHeight, (err, card) => {
@@ -421,7 +421,7 @@ createProfileCard = (row) => {
 					
 					if (topHeight + totalRowHeight + bottomHeight < cardHeight) {
 						// Background
-						card.scan(0, topHeight + totalRowHeight, card.bitmap.width, cardHeight - topHeight - totalRowHeight - bottomHeight, makeIteratorThatFillsWithColor(0xffffffff));
+						card.scan(0, topHeight + totalRowHeight, card.bitmap.width, cardHeight - topHeight - totalRowHeight - bottomHeight, makeIteratorThatFillsWithColor(0xffa9aaaf));
 					}
 					
 					// Print name
@@ -481,7 +481,7 @@ createProfileCard = (row) => {
 							xAvatar = 70 - avatar.bitmap.width / 2;
 						} else if (avatar.bitmap.width > 206) {
 							avatar.resize(206, Jimp.AUTO);
-							yAvatar += (avatarHeight - avatar.bitmap.height) / 2;
+							// yAvatar += (avatarHeight - avatar.bitmap.height) / 2;
 						}
 						card.blit(avatar, xAvatar, yAvatar);
 						logger.info('Avatar added');
