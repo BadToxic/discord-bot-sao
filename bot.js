@@ -375,7 +375,6 @@ createProfileCard = (row) => {
 		}
 			
 		Promise.all(promises).then((values) => {
-			logger.info('Resolved all createProfileCard promises.');
 			
 			let topHeight = 88;
 			let bottomHeight = 34;
@@ -396,7 +395,6 @@ createProfileCard = (row) => {
 			
 			const totalRowHeight = rowNumber * rowHeight;
 			let cardHeight = topHeight + bottomHeight + totalRowHeight;
-			logger.info('Calculated cardHeight: ' + cardHeight);
 			if (cardHeight < 284) {
 				cardHeight = 284;
 			}
@@ -417,7 +415,6 @@ createProfileCard = (row) => {
 					// Add header and footer
 					card.blit(values[0], 0, 0);
 					card.blit(values[1], 0, card.bitmap.height - bottomHeight);
-					logger.info('Top and Bottom added');
 					
 					if (topHeight + totalRowHeight + bottomHeight < cardHeight) {
 						// Background
@@ -426,7 +423,6 @@ createProfileCard = (row) => {
 					
 					// Print name
 					card.print(font, 82, 45, row.discord_name);
-					logger.info('Name added:' + row.discord_name);
 					
 					let yRow = topHeight;
 					
@@ -440,10 +436,7 @@ createProfileCard = (row) => {
 						}
 						
 						// Text
-						card.print(font, xAttributes - Jimp.measureText(font, text), yRow + yTextOffset, text/*{
-						    text: text, alignmentX: Jimp.HORIZONTAL_ALIGN_RIGHT, alignmentY: Jimp.VERTICAL_ALIGN_TOP
-						}, xAttributes, rowHeight*/);
-						logger.info('text: ' + text);
+						card.print(font, xAttributes - Jimp.measureText(font, text), yRow + yTextOffset, text);
 						
 						yRow += rowHeight;
 					};
@@ -452,22 +445,18 @@ createProfileCard = (row) => {
 					// Level
 					if (row.sao_level) {
 						createRow(values[iconPromiseIndex++], 'Lv: ' + row.sao_level);
-						logger.info('Level added');
 					}
 					if (row.sao_id) {
 						createRow(values[iconPromiseIndex], 'ID: ' + row.sao_id);
 						if (!row.sao_alt_id) { // Would use the same icon
 							iconPromiseIndex++;
 						}
-						logger.info('ID added');
 					}
 					if (row.sao_alt_id) {
 						createRow(values[iconPromiseIndex++], '2nd ID: ' + row.sao_alt_id);
-						logger.info('Alt ID added');
 					}
 					if (row.utc) {
 						createRow(values[iconPromiseIndex], 'Timezone: UTC ' + (row.utc > 0 ? '+' : '') + row.utc);
-						logger.info('UTC added');
 					}
 					
 					// Add avatar
@@ -484,7 +473,6 @@ createProfileCard = (row) => {
 							// yAvatar += (avatarHeight - avatar.bitmap.height) / 2;
 						}
 						card.blit(avatar, xAvatar, yAvatar);
-						logger.info('Avatar added');
 					}
 		
 					// Save on server
@@ -580,19 +568,20 @@ handleCmdPlayer = (message) => {
 						const row = result.rows[0];
 						// logger.info('result:');
 						// logger.info(result);
-						answer = '**' + row.discord_name + '**\n';
+						/*answer = '**' + row.discord_name + '**\n';
 						if (row.sao_level) {
 							answer += '**Level: ' + row.sao_level + '**\n';
-						}
+						}*/
 						if (row.sao_id) {
-							answer += '**ID: ' + row.sao_id + '**\n';
+							answer = '**' + row.sao_id + '**';
+						} else if (row.sao_alt_id) {
+							answer = '**' + row.sao_alt_id + '**';
+						} else {
+							answer = '';
 						}
-						if (row.sao_alt_id) {
-							answer += 'Second Account ID: ' + row.sao_alt_id + '\n';
-						}
-						if (row.utc) {
+						/*if (row.utc) {
 							answer += 'Timezone: UTC ' + (row.utc >= 0 ? '+' : '') + row.utc + '\n';
-						}
+						}*/
 						createProfileCard(row).then((options) => {
 							send(message, answer, options);
 						});
