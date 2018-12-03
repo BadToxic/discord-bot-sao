@@ -648,17 +648,23 @@ createRankList = (rows) => {
 			
 		return Promise.all(promises).then((values) => {
 			
-			let topHeight = 34;
+			let topHeight = 33;
 			let bottomHeight = 35;
-			let rowHeight = 43;
+			let rowHeight = 42;
 			let rowNumber = rows.length;
 			
 			const totalRowHeight = rowNumber * rowHeight;
-			let listWidth = 347;
+			let columnWidth = 347;
+			let columnNumber = 1;
+			let totalWidth = columnWidth;
+			if (rows.length > 10) {
+				totalWidth *= 2;
+				columnNumber++;
+			}
 			let listHeight = topHeight + bottomHeight + totalRowHeight;
 			
 			return new Promise(function(resolve, reject) {
-				new Jimp(listWidth, listHeight, (err, rankList) => {
+				new Jimp(totalWidth, listHeight, (err, rankList) => {
 					if (err) {
 						logger.info('Could not create rankList image');
 						cancelCard();
@@ -667,22 +673,27 @@ createRankList = (rows) => {
 						let rowBackground = values[2];
 						let font = values[3];
 						// let xIcon = rankList.bitmap.width - 52;
+						let xLeft = 0;
 						let xText = 32;
 						// let yIconOffset = 2;
 						let yTextOffset = 7;
 						
 						// Add header and footer
-						rankList.blit(values[0], 0, 0);
-						rankList.blit(values[1], 0, rankList.bitmap.height - bottomHeight);
+						for (let columnIndex = 0; columnIndex < columnNumber; columnIndex++) {
+							let xTopBottom = columnIndex * columnWidth;
+							rankList.blit(values[0], xTopBottom, 0);
+							rankList.blit(values[1], xTopBottom, rankList.bitmap.height - bottomHeight);
+						}
 						
 						let yRow = topHeight;
 						
 						// Create rows
+						let rowIndex = 0;
 						rows.forEach((row) => {
 							// logger.info('Checking ' + row.discord_name);
 							
 							// Background
-							rankList.blit(rowBackground, 0, yRow);
+							rankList.blit(rowBackground, xLeft, yRow);
 							
 							// Text
 							const text = padLeft(row.rank, 2, ' ') + '.   Lv: ' + padLeft(row.sao_level, 3, ' ');
@@ -691,10 +702,17 @@ createRankList = (rows) => {
 							
 							// Add avatar
 							if (row.avatar) {
-								rankList.blit(row.avatar, xText + 154, yRow + 4);
+								rankList.blit(row.avatar, xText + 154, yRow + 5);
 							}
 							
 							yRow += rowHeight;
+							rowIndex++;
+							if (rowIndex === 10) {
+								// Start next column
+								xLeft += columnWidth;
+								xText = xLeft + 32;
+								yRow = topHeight;
+							}
 						});
 						
 						// Save on server
@@ -747,6 +765,11 @@ handleCmdRank = (message) => {
 						player.rank = rank;
 						answer += (rank++) + '. **' + player.discord_name + '** (level **' + player.sao_level + '**)\n';
 					});
+					
+					// Take only the first 20 players
+					if (result.rows.length > 20) {
+						result.rows = result.rows.slice(0, 20);
+					}
 				
 					// Search the user discord avatar urls
 					getUserAvatarUrls(result.rows/*.filter(row => row.sao_level !== null)*/);
