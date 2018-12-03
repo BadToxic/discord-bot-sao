@@ -366,6 +366,7 @@ loadUserAvatars = (rows, avatarSize) => {
 			);
 		}
 	});
+	return avatarPromises;
 };
 
 createRankList = (rows) => {
