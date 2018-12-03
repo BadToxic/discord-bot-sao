@@ -653,7 +653,7 @@ createRankList = (rows) => {
 			let rowHeight = 41;
 			let rowNumber = rows.length;
 			
-			const totalRowHeight = rowNumber * rowHeight;
+			let totalRowHeight = rowNumber * rowHeight;
 			let columnWidth = 347;
 			let columnNumber = 1;
 			let totalWidth = columnWidth;
