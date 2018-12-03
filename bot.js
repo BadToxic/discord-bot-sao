@@ -648,9 +648,9 @@ createRankList = (rows) => {
 			
 		return Promise.all(promises).then((values) => {
 			
-			let topHeight = 33;
+			let topHeight = 32;
 			let bottomHeight = 35;
-			let rowHeight = 42;
+			let rowHeight = 41;
 			let rowNumber = rows.length;
 			
 			const totalRowHeight = rowNumber * rowHeight;
@@ -659,6 +659,7 @@ createRankList = (rows) => {
 			let totalWidth = columnWidth;
 			if (rows.length > 10) {
 				totalWidth *= 2;
+				totalRowHeight /= 2;
 				columnNumber++;
 			}
 			let listHeight = topHeight + bottomHeight + totalRowHeight;
@@ -696,7 +697,7 @@ createRankList = (rows) => {
 							rankList.blit(rowBackground, xLeft, yRow);
 							
 							// Text
-							const text = padLeft(row.rank, 2, ' ') + '.   Lv: ' + padLeft(row.sao_level, 3, ' ');
+							const text = padLeft(row.rank, 2, '  ') + '.     Lv: ' + padLeft(row.sao_level, 3, '  ');
 							rankList.print(font, xText, yRow + yTextOffset, text);
 							rankList.print(font, xText + 194, yRow + yTextOffset, row.discord_name);
 							
