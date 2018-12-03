@@ -444,7 +444,7 @@ createRankList = (rows) => {
 							
 							// Add avatar
 							if (row.avatar) {
-								rankList.blit(avatar, xText + 64, yRow + 2);
+								rankList.blit(row.avatar, xText + 64, yRow + 2);
 							}
 							
 							yRow += rowHeight;
@@ -1019,7 +1019,6 @@ createTimezoneMap = (message, timezones, font, result) => {
 			}
 			
 			// Draw background rectangle
-		    logger.info('Draw background rectangle');
 			timezones.scan(xName - 2, y, widthName + 2, fontSize, lighten);
 			
 			// Draw avatar 
@@ -1030,11 +1029,9 @@ createTimezoneMap = (message, timezones, font, result) => {
 			}
 			
 			// Draw little marker
-		    logger.info('Draw little marker');
 			timezones.scan(xMarker, y - 4, 8, 8, makeIteratorThatFillsWithColor(0x0030a1df));
 			
 			// Print name
-		    logger.info('Print name');
 			timezones.print(font, xName, y, text);
 			
 			y += fontSize + fontSep;
@@ -1055,7 +1052,7 @@ createTimezoneMap = (message, timezones, font, result) => {
 };
 getUserAvatarUrls = (rows) => {
 	rows.forEach((row) => {
-		logger.info('getUserAvatarUrls: row.discord_id: ' + row.discord_id);
+		// logger.info('getUserAvatarUrls: row.discord_id: ' + row.discord_id);
 		const user = bot.users.get(row.discord_id);
 		if (user !== undefined) {
 			row.avatarUrl = user.avatarURL;
