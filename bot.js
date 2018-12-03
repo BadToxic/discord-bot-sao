@@ -707,7 +707,7 @@ createRankList = (rows) => {
 						resolve({files: [rankListPath]});
 					}
 				});
-			}
+			});
 		}).catch(err => {
 			logger.info('Error while resolving profile rank list promises: ' + err);
 			// Only use the avatar image
