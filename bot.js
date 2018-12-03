@@ -370,108 +370,6 @@ loadUserAvatars = (rows, avatarSize) => {
 	return avatarPromises;
 };
 
-createRankList = (rows) => {
-	
-	let avatarSize = 32;
-	let avatarPromises = loadUserAvatars(rows, avatarSize);
-	
-	let afterAvatarsLoadedCounter = 0;
-	const afterAvatarsLoaded = () => {
-		afterAvatarsLoadedCounter++;
-		if (afterAvatarsLoadedCounter > 1) {
-			logger.info('Called afterAvatarsLoaded again: ' + afterAvatarsLoadedCounter);
-			return;
-		}
-		
-		logger.info('Called afterAvatarsLoaded');
-		
-		return new Promise(function(resolve, reject) {
-			let topPromise = Jimp.read('./img/profile/profile-top.png');             // 498 x 88
-			let bottomPromise = Jimp.read('./img/profile/profile-bottom.png'); // 498 x 34
-			let rowPromise = Jimp.read('./img/profile/profile-row.png');           // 498 x 54
-			let fontPromise = Jimp.loadFont(fontPath);
-			
-			options = undefined;
-			const cancelCard = () => {
-				resolve(undefined);
-			};
-			let promises = [topPromise, bottomPromise, rowPromise, fontPromise];
-				
-			Promise.all(promises).then((values) => {
-				
-				let topHeight = 88;
-				let bottomHeight = 34;
-				let rowHeight = 54;
-				let rowNumber = rows.length;
-				
-				const totalRowHeight = rowNumber * rowHeight;
-				let listHeight = topHeight + bottomHeight + totalRowHeight;
-				
-				new Jimp(498, listHeight, (err, rankList) => {
-					if (err) {
-						logger.info('Could not create rankList image');
-						cancelCard();
-					} else {
-						
-						let rowBackground = values[2];
-						let font = values[3];
-						// let xIcon = rankList.bitmap.width - 52;
-						let xText = 32;
-						// let yIconOffset = 2;
-						let yTextOffset = 10;
-						
-						// Add header and footer
-						rankList.blit(values[0], 0, 0);
-						rankList.blit(values[1], 0, rankList.bitmap.height - bottomHeight);
-						
-						let yRow = topHeight;
-						
-						// Create rows
-						rows.forEach((row) => {
-							logger.info('Checking ' + row.discord_name);
-							
-							// Background
-							rankList.blit(rowBackground, 0, yRow);
-							
-							// Icon
-							/*if (icon) {
-								rankList.blit(icon, xIcon, yRow + yIconOffset);
-							}*/
-							
-							// Text
-							const text = row.rank + '. Lv: ' + row.sao_level + '           ' + row.discord_name;
-							rankList.print(font, xText /*- Jimp.measureText(font, text)*/, yRow + yTextOffset, text);
-							
-							// Add avatar
-							if (row.avatar) {
-								rankList.blit(row.avatar, xText + 64, yRow + 2);
-							}
-							
-							yRow += rowHeight;
-						});
-						
-						// Save on server
-						const rankListPath = './img/rank-list.png';
-						rankList.write(rankListPath);
-						
-						resolve({files: [rankListPath]});
-					}
-				});
-			}).catch(err => {
-				logger.info('Error while resolving profile rank list promises: ' + err);
-				// Only use the avatar image
-				cancelCard();
-			});
-		});
-		
-	};
-	return Promise.all(avatarPromises).then((values) => {
-		afterAvatarsLoaded();
-	}).catch(err => {
-		logger.info('Error while resolving user discord avatars: ' + err);
-		afterAvatarsLoaded();
-	}); 
-};
 createProfileCard = (row) => {
 	return new Promise(function(resolve, reject) {
 		let topPromise = Jimp.read('./img/profile/profile-top.png');             // 498 x 88
@@ -721,6 +619,109 @@ handleCmdPlayer = (message) => {
 	}
 };
 
+createRankList = (rows) => {
+	
+	let avatarSize = 32;
+	let avatarPromises = loadUserAvatars(rows, avatarSize);
+	
+	let afterAvatarsLoadedCounter = 0;
+	const afterAvatarsLoaded = () => {
+		afterAvatarsLoadedCounter++;
+		if (afterAvatarsLoadedCounter > 1) {
+			logger.info('Called afterAvatarsLoaded again: ' + afterAvatarsLoadedCounter);
+			return;
+		}
+		
+		logger.info('Called afterAvatarsLoaded');
+		
+		let topPromise = Jimp.read('./img/profile/profile-top.png');             // 498 x 88
+		let bottomPromise = Jimp.read('./img/profile/profile-bottom.png'); // 498 x 34
+		let rowPromise = Jimp.read('./img/profile/profile-row.png');           // 498 x 54
+		let fontPromise = Jimp.loadFont(fontPath);
+		
+		options = undefined;
+		const cancelCard = () => {
+			resolve(undefined);
+		};
+		let promises = [topPromise, bottomPromise, rowPromise, fontPromise];
+			
+		return Promise.all(promises).then((values) => {
+			
+			let topHeight = 88;
+			let bottomHeight = 34;
+			let rowHeight = 54;
+			let rowNumber = rows.length;
+			
+			const totalRowHeight = rowNumber * rowHeight;
+			let listHeight = topHeight + bottomHeight + totalRowHeight;
+			
+			return new Promise(function(resolve, reject) {
+				new Jimp(498, listHeight, (err, rankList) => {
+					if (err) {
+						logger.info('Could not create rankList image');
+						cancelCard();
+					} else {
+						
+						let rowBackground = values[2];
+						let font = values[3];
+						// let xIcon = rankList.bitmap.width - 52;
+						let xText = 32;
+						// let yIconOffset = 2;
+						let yTextOffset = 10;
+						
+						// Add header and footer
+						rankList.blit(values[0], 0, 0);
+						rankList.blit(values[1], 0, rankList.bitmap.height - bottomHeight);
+						
+						let yRow = topHeight;
+						
+						// Create rows
+						rows.forEach((row) => {
+							logger.info('Checking ' + row.discord_name);
+							
+							// Background
+							rankList.blit(rowBackground, 0, yRow);
+							
+							// Icon
+							/*if (icon) {
+								rankList.blit(icon, xIcon, yRow + yIconOffset);
+							}*/
+							
+							// Text
+							const text = row.rank + '. Lv: ' + row.sao_level + '           ' + row.discord_name;
+							rankList.print(font, xText /*- Jimp.measureText(font, text)*/, yRow + yTextOffset, text);
+							
+							// Add avatar
+							if (row.avatar) {
+								rankList.blit(row.avatar, xText + 64, yRow + 2);
+							}
+							
+							yRow += rowHeight;
+						});
+						
+						// Save on server
+						const rankListPath = './img/rank-list.png';
+						rankList.write(rankListPath);
+						logger.info('Saved rank list picture: ' + rankListPath);
+						
+						resolve({files: [rankListPath]});
+					}
+				});
+			}
+		}).catch(err => {
+			logger.info('Error while resolving profile rank list promises: ' + err);
+			// Only use the avatar image
+			cancelCard();
+		});
+		
+	};
+	return Promise.all(avatarPromises).then((values) => {
+		afterAvatarsLoaded();
+	}).catch(err => {
+		logger.info('Error while resolving user discord avatars: ' + err);
+		afterAvatarsLoaded();
+	}); 
+};
 handleCmdRank = (message) => {
 		
 	const db = getDbClient();
