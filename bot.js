@@ -716,10 +716,11 @@ createRankList = (rows) => {
 		
 	};
 	return Promise.all(avatarPromises).then((values) => {
-		afterAvatarsLoaded();
+		logger.info('Promise.all(avatarPromises) resolved!');
+		return afterAvatarsLoaded();
 	}).catch(err => {
 		logger.info('Error while resolving user discord avatars: ' + err);
-		afterAvatarsLoaded();
+		return afterAvatarsLoaded();
 	}); 
 };
 handleCmdRank = (message) => {
@@ -755,6 +756,7 @@ handleCmdRank = (message) => {
 				}
 				
 				createRankList(result.rows).then((options) => {
+					logger.info('Finished createRankList with options: ' + options);
 					send(message, answer, options);
 				});
 				
