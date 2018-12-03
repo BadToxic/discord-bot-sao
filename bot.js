@@ -421,7 +421,7 @@ createProfileCard = (row) => {
 					
 					if (topHeight + totalRowHeight + bottomHeight < cardHeight) {
 						// Background
-						card.scan(0, topHeight + totalRowHeight, card.bitmap.width, cardHeight - topHeight - totalRowHeight - bottomHeight, makeIteratorThatFillsWithColor(0x00ffffff));
+						card.scan(0, topHeight + totalRowHeight, card.bitmap.width, cardHeight - topHeight - totalRowHeight - bottomHeight, makeIteratorThatFillsWithColor(0xffffffff));
 					}
 					
 					// Print name
@@ -476,10 +476,14 @@ createProfileCard = (row) => {
 						let avatarHeight = cardHeight - topHeight - bottomHeight;
 						avatar.resize(Jimp.AUTO, avatarHeight);
 						let xAvatar = 0;
+						let yAvatar = topHeight;
 						if (avatar.bitmap.width < 140) {
 							xAvatar = 70 - avatar.bitmap.width / 2;
+						} else if (avatar.bitmap.width > 206) {
+							avatar.resize(206, Jimp.AUTO);
+							yAvatar += (avatarHeight - avatar.bitmap.height) / 2;
 						}
-						card.blit(avatar, xAvatar, topHeight);
+						card.blit(avatar, xAvatar, yAvatar);
 						logger.info('Avatar added');
 					}
 		
