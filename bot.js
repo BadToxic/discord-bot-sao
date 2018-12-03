@@ -129,12 +129,12 @@ getBosses = () => {
 	return bosses;
 };
 
-makeIteratorThatFillsWithColor = (color) => {
+function makeIteratorThatFillsWithColor(color){
 	return function (x, y, offset) {
 		this.bitmap.data.writeUInt32BE(color, offset, true);
 	}
 };
-lighten = (x, y, idx) => {
+function lighten(x, y, idx) {
 	function bound(value) {
 		if (value > 255) {
 			return 255;
@@ -864,6 +864,7 @@ createTimezoneMap = (message, timezones, font, result) => {
 		}
 		// logger.info('Called afterAvatarsLoaded');
 		result.rows.forEach((row) => {
+		    logger.info('Checking ' + row.discord_name);
 			if (row.utc < -12) {
 				row.utc = -12;
 			} else if (row.utc > 12) {
@@ -899,6 +900,7 @@ createTimezoneMap = (message, timezones, font, result) => {
 			}
 			
 			// Draw background rectangle
+		    logger.info('Draw background rectangle');
 			timezones.scan(xName - 2, y, widthName + 2, fontSize, lighten);
 			
 			// Draw avatar 
@@ -909,9 +911,11 @@ createTimezoneMap = (message, timezones, font, result) => {
 			}
 			
 			// Draw little marker
+		    logger.info('Draw little marker');
 			timezones.scan(xMarker, y - 4, 8, 8, makeIteratorThatFillsWithColor(0x0030a1df));
 			
 			// Print name
+		    logger.info('Print name');
 			timezones.print(font, xName, y, text);
 			
 			y += fontSize + fontSep;
