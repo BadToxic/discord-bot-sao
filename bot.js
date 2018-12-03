@@ -86,6 +86,9 @@ capitalizeFirstLetter = (stringToChange) => {
 capitalizeFirstLetters = (stringToChange) => {
     return stringToChange.split(' ').map(capitalizeFirstLetter).join(' ');
 }
+padLeft = (nr, n, str) => { // fillLeft
+    return Array(n - String(nr).length + 1).join(str || '0') + nr;
+}
 
 send = (message, answer, options) => {
 	if (answer.length <= DISCORD_MESSAGE_MAX_LENGTH) {
@@ -632,9 +635,7 @@ createRankList = (rows) => {
 			return;
 		}
 		
-		logger.info('Called afterAvatarsLoaded');
-		
-		let topPromise = Jimp.read('./img/profile/profile-top.png');             // 498 x 88
+		let topPromise = Jimp.read('./img/profile/profile-top-small.png');             // 498 x 33
 		let bottomPromise = Jimp.read('./img/profile/profile-bottom.png'); // 498 x 34
 		let rowPromise = Jimp.read('./img/profile/profile-row.png');           // 498 x 54
 		let fontPromise = Jimp.loadFont(fontPath);
@@ -647,7 +648,7 @@ createRankList = (rows) => {
 			
 		return Promise.all(promises).then((values) => {
 			
-			let topHeight = 88;
+			let topHeight = 33;
 			let bottomHeight = 34;
 			let rowHeight = 54;
 			let rowNumber = rows.length;
@@ -667,7 +668,7 @@ createRankList = (rows) => {
 						// let xIcon = rankList.bitmap.width - 52;
 						let xText = 32;
 						// let yIconOffset = 2;
-						let yTextOffset = 10;
+						let yTextOffset = 11;
 						
 						// Add header and footer
 						rankList.blit(values[0], 0, 0);
@@ -677,23 +678,19 @@ createRankList = (rows) => {
 						
 						// Create rows
 						rows.forEach((row) => {
-							logger.info('Checking ' + row.discord_name);
+							// logger.info('Checking ' + row.discord_name);
 							
 							// Background
 							rankList.blit(rowBackground, 0, yRow);
 							
-							// Icon
-							/*if (icon) {
-								rankList.blit(icon, xIcon, yRow + yIconOffset);
-							}*/
-							
 							// Text
-							const text = row.rank + '. Lv: ' + row.sao_level + '           ' + row.discord_name;
-							rankList.print(font, xText /*- Jimp.measureText(font, text)*/, yRow + yTextOffset, text);
+							const text = padLeft(row.rank, 2, ' ') + '.   Lv: ' + padLeft(row.sao_level, 3, ' ');
+							rankList.print(font, xText, yRow + yTextOffset, text);
+							rankList.print(font, xText + 194, yRow + yTextOffset, row.discord_name);
 							
 							// Add avatar
 							if (row.avatar) {
-								rankList.blit(row.avatar, xText + 64, yRow + 2);
+								rankList.blit(row.avatar, xText + 154, yRow + 8);
 							}
 							
 							yRow += rowHeight;
@@ -716,7 +713,6 @@ createRankList = (rows) => {
 		
 	};
 	return Promise.all(avatarPromises).then((values) => {
-		logger.info('Promise.all(avatarPromises) resolved!');
 		return afterAvatarsLoaded();
 	}).catch(err => {
 		logger.info('Error while resolving user discord avatars: ' + err);
@@ -734,7 +730,7 @@ handleCmdRank = (message) => {
 			send(message, answer);
 		} else {
 			// logger.info('db connected');
-			const query = 'SELECT * FROM players ORDER BY sao_level DESC;'
+			const query = 'SELECT * FROM players WHERE sao_level IS NOT NULL ORDER BY sao_level DESC;'
 			// logger.info(query);
 			db.query(query, (err, result) => {
 				if (err) {
@@ -752,11 +748,14 @@ handleCmdRank = (message) => {
 					});
 				
 					// Search the user discord avatar urls
-					getUserAvatarUrls(result.rows);
+					getUserAvatarUrls(result.rows/*.filter(row => row.sao_level !== null)*/);
 				}
 				
 				createRankList(result.rows).then((options) => {
-					logger.info('Finished createRankList with options: ' + options);
+					// logger.info('Finished createRankList with options: ' + options);
+					if (options !== undefined) {
+						answer = '';
+					}
 					send(message, answer, options);
 				});
 				
