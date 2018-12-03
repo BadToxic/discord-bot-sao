@@ -344,6 +344,132 @@ handleCmdItem = (message) => {
 	send(message, answer, options);
 };
 
+loadUserAvatars = (rows, avatarSize) => {
+	
+	// Iterate all players that have a timezone
+	let avatarPromises = [];
+	rows.forEach((row) => {
+		if (row.avatarUrl !== undefined) {
+			row.avatarUrl += 'size=' + avatarSize;
+			avatarPromises.push(Jimp.read(row.avatarUrl)
+				.then((avatar) => {
+					// logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+					row.avatar = avatar;
+					return new Promise((resolve, reject) => {
+						resolve(avatar);
+					});
+				})
+				.catch(err => {
+					logger.info('Could not load user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+					row.avatarUrl = undefined;
+				})
+			);
+		}
+	});
+};
+
+createRankList = (rows) => {
+	
+	let avatarSize = 32;
+	let avatarPromises = loadUserAvatars(rows, avatarSize);
+	
+	let afterAvatarsLoadedCounter = 0;
+	const afterAvatarsLoaded = () => {
+		afterAvatarsLoadedCounter++;
+		if (afterAvatarsLoadedCounter > 1) {
+			logger.info('Called afterAvatarsLoaded again: ' + afterAvatarsLoadedCounter);
+			return;
+		}
+		
+		logger.info('Called afterAvatarsLoaded');
+		
+		return new Promise(function(resolve, reject) {
+			let topPromise = Jimp.read('./img/profile/profile-top.png');             // 498 x 88
+			let bottomPromise = Jimp.read('./img/profile/profile-bottom.png'); // 498 x 34
+			let rowPromise = Jimp.read('./img/profile/profile-row.png');           // 498 x 54
+			let fontPromise = Jimp.loadFont(fontPath);
+			
+			options = undefined;
+			const cancelCard = () => {
+				resolve(undefined);
+			};
+			let promises = [topPromise, bottomPromise, rowPromise, fontPromise];
+				
+			Promise.all(promises).then((values) => {
+				
+				let topHeight = 88;
+				let bottomHeight = 34;
+				let rowHeight = 54;
+				let rowNumber = rows.length;
+				
+				const totalRowHeight = rowNumber * rowHeight;
+				let listHeight = topHeight + bottomHeight + totalRowHeight;
+				
+				new Jimp(498, listHeight, (err, rankList) => {
+					if (err) {
+						logger.info('Could not create rankList image');
+						cancelCard();
+					} else {
+						
+						let rowBackground = values[2];
+						let font = values[3];
+						// let xIcon = rankList.bitmap.width - 52;
+						let xText = 32;
+						// let yIconOffset = 2;
+						let yTextOffset = 10;
+						
+						// Add header and footer
+						rankList.blit(values[0], 0, 0);
+						rankList.blit(values[1], 0, rankList.bitmap.height - bottomHeight);
+						
+						let yRow = topHeight;
+						
+						// Create rows
+						rows.forEach((row) => {
+							logger.info('Checking ' + row.discord_name);
+							
+							// Background
+							rankList.blit(rowBackground, 0, yRow);
+							
+							// Icon
+							/*if (icon) {
+								rankList.blit(icon, xIcon, yRow + yIconOffset);
+							}*/
+							
+							// Text
+							const text = row.rank + '. Lv: ' + row.sao_level + '           ' + row.discord_name;
+							rankList.print(font, xText /*- Jimp.measureText(font, text)*/, yRow + yTextOffset, text);
+							
+							// Add avatar
+							if (row.avatar) {
+								rankList.blit(avatar, xText + 64, yRow + 2);
+							}
+							
+							yRow += rowHeight;
+						});
+						
+						// Save on server
+						const rankListPath = './img/rank-list.png';
+						rankList.write(rankListPath);
+						
+						resolve({files: [rankListPath]});
+					}
+				});
+			}).catch(err => {
+				logger.info('Error while resolving profile rank list promises: ' + err);
+				// Only use the avatar image
+				cancelCard();
+			});
+		});
+		
+	};
+	Promise.all(avatarPromises).then((values) => {
+		afterAvatarsLoaded();
+	}).catch(err => {
+		logger.info('Error while resolving user discord avatars: ' + err);
+		afterAvatarsLoaded();
+	}); 
+};
 createProfileCard = (row) => {
 	return new Promise(function(resolve, reject) {
 		let topPromise = Jimp.read('./img/profile/profile-top.png');             // 498 x 88
@@ -617,10 +743,18 @@ handleCmdRank = (message) => {
 					answer = '';
 					let rank = 1;
 					result.rows.forEach(player => {
+						player.rank = rank;
 						answer += (rank++) + '. **' + player.discord_name + '** (level **' + player.sao_level + '**)\n';
 					});
 				}
-				send(message, answer);
+				
+				// Search the user discord avatar urls
+				getUserAvatarUrls(result.rows);
+				
+				createRankList(result.rows).then((options) => {
+					send(message, answer, options);
+				});
+				
 				db.end();
 			});
 		}
@@ -836,25 +970,8 @@ createTimezoneMap = (message, timezones, font, result) => {
 	let avatarSize = 32;
 	
 	// Iterate all players that have a timezone
-	let avatarPromises = [];
-	result.rows.forEach((row) => {
-		if (row.avatarUrl !== undefined) {
-			row.avatarUrl += 'size=' + avatarSize;
-			avatarPromises.push(Jimp.read(row.avatarUrl)
-				.then((avatar) => {
-					// logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
-					row.avatar = avatar;
-					return new Promise((resolve, reject) => {
-						resolve(avatar);
-					});
-				})
-				.catch(err => {
-					logger.info('Could not load user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
-					row.avatarUrl = undefined;
-				})
-			);
-		}
-	});
+	let avatarPromises = loadUserAvatars(rows, avatarSize);
+	
 	let afterAvatarsLoadedCounter = 0;
 	const afterAvatarsLoaded = () => {
 		afterAvatarsLoadedCounter++;
@@ -864,7 +981,7 @@ createTimezoneMap = (message, timezones, font, result) => {
 		}
 		// logger.info('Called afterAvatarsLoaded');
 		result.rows.forEach((row) => {
-		    logger.info('Checking ' + row.discord_name);
+			
 			if (row.utc < -12) {
 				row.utc = -12;
 			} else if (row.utc > 12) {
@@ -933,7 +1050,17 @@ createTimezoneMap = (message, timezones, font, result) => {
 		logger.info('Error while resolving user discord avatars: ' + err);
 		afterAvatarsLoaded();
 	});
-}
+};
+getUserAvatarUrls = (rows) => {
+	rows.forEach((row) => {
+		row.avatarUrl = bot.users.get(row.discord_id).avatarURL;
+		if (row.avatarUrl === null) {
+			row.avatarUrl = undefined;
+		} else {
+			row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
+		}
+	});
+};
 handleCmdTimezones = (message) => {
 	Jimp.read('./img/timezones.jpg', (err, timezones) => {
 		if (err) {
@@ -964,14 +1091,7 @@ handleCmdTimezones = (message) => {
 								send(message, answer);
 							} else {
 								// Search the user discord avatar urls
-								result.rows.forEach((row) => {
-									row.avatarUrl = bot.users.get(row.discord_id).avatarURL;
-									if (row.avatarUrl === null) {
-										row.avatarUrl = undefined;
-									} else {
-										row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
-									}
-								});
+								getUserAvatarUrls(result.rows);
 								
 								createTimezoneMap(message, timezones, font, result);
 							}
