@@ -346,7 +346,7 @@ handleCmdItem = (message) => {
 
 loadUserAvatars = (rows, avatarSize) => {
 	
-	// Iterate all players that have a timezone
+	// Iterate all players (rows)
 	let avatarPromises = [];
 	rows.forEach((row) => {
 		if (row.avatarUrl !== undefined) {
@@ -366,6 +366,7 @@ loadUserAvatars = (rows, avatarSize) => {
 			);
 		}
 	});
+	
 	return avatarPromises;
 };
 
@@ -1055,11 +1056,14 @@ createTimezoneMap = (message, timezones, font, result) => {
 getUserAvatarUrls = (rows) => {
 	rows.forEach((row) => {
 		logger.info('getUserAvatarUrls: row.discord_id: ' + row.discord_id);
-		row.avatarUrl = bot.users.get(row.discord_id).avatarURL;
-		if (row.avatarUrl === null) {
-			row.avatarUrl = undefined;
-		} else {
-			row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
+		const user = bot.users.get(row.discord_id);
+		if (user !== undefined) {
+			row.avatarUrl = user.avatarURL;
+			if (row.avatarUrl === null) {
+				row.avatarUrl = undefined;
+			} else {
+				row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
+			}
 		}
 	});
 };
