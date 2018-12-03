@@ -635,9 +635,9 @@ createRankList = (rows) => {
 			return;
 		}
 		
-		let topPromise = Jimp.read('./img/profile/profile-top-small.png');             // 498 x 33
-		let bottomPromise = Jimp.read('./img/profile/profile-bottom.png'); // 498 x 34
-		let rowPromise = Jimp.read('./img/profile/profile-row.png');           // 498 x 54
+		let topPromise = Jimp.read('./img/rank/rank-top.png');             // 347 x 34
+		let bottomPromise = Jimp.read('./img/rank/rank-bottom.png'); // 347 x 35
+		let rowPromise = Jimp.read('./img/rank/rank-row.png');           // 347 x 43
 		let fontPromise = Jimp.loadFont(fontPath);
 		
 		options = undefined;
@@ -648,16 +648,17 @@ createRankList = (rows) => {
 			
 		return Promise.all(promises).then((values) => {
 			
-			let topHeight = 33;
-			let bottomHeight = 34;
-			let rowHeight = 54;
+			let topHeight = 34;
+			let bottomHeight = 35;
+			let rowHeight = 43;
 			let rowNumber = rows.length;
 			
 			const totalRowHeight = rowNumber * rowHeight;
+			let listWidth = 347;
 			let listHeight = topHeight + bottomHeight + totalRowHeight;
 			
 			return new Promise(function(resolve, reject) {
-				new Jimp(498, listHeight, (err, rankList) => {
+				new Jimp(listWidth, listHeight, (err, rankList) => {
 					if (err) {
 						logger.info('Could not create rankList image');
 						cancelCard();
@@ -668,7 +669,7 @@ createRankList = (rows) => {
 						// let xIcon = rankList.bitmap.width - 52;
 						let xText = 32;
 						// let yIconOffset = 2;
-						let yTextOffset = 11;
+						let yTextOffset = 7;
 						
 						// Add header and footer
 						rankList.blit(values[0], 0, 0);
@@ -690,7 +691,7 @@ createRankList = (rows) => {
 							
 							// Add avatar
 							if (row.avatar) {
-								rankList.blit(row.avatar, xText + 154, yRow + 8);
+								rankList.blit(row.avatar, xText + 154, yRow + 4);
 							}
 							
 							yRow += rowHeight;
