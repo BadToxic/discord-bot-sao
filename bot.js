@@ -964,8 +964,9 @@ handleCmdTimezones = (message) => {
 									row.avatarUrl = bot.users.get(row.discord_id).avatarURL;
 									if (row.avatarUrl === null) {
 										row.avatarUrl = undefined;
+									} else {
+										row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
 									}
-									row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
 								});
 								
 								createTimezoneMap(message, timezones, font, result);
