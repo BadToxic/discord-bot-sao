@@ -421,7 +421,7 @@ createProfileCard = (row) => {
 					
 					if (topHeight + totalRowHeight + bottomHeight < cardHeight) {
 						// Background
-						card.scan(0, topHeight + totalRowHeight, card.bitmap.width, cardHeight - topHeight - totalRowHeight - bottomHeight, makeIteratorThatFillsWithColor(0xffa9aaaf));
+						card.scan(0, topHeight + totalRowHeight, card.bitmap.width, cardHeight - topHeight - totalRowHeight - bottomHeight, makeIteratorThatFillsWithColor(0xa9aaafff));
 					}
 					
 					// Print name
