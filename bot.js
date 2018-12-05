@@ -24,7 +24,7 @@ const fontPath = 'fonts/sao-font-28-black.fnt';
 
 const useMock = false;
 
-const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'level', 'lv', 'lvl', 'time', 'timezone', 'utc'];
+const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'picture', 'avatar', 'level', 'lv', 'lvl', 'time', 'timezone', 'utc'];
 
 const help = 
 'Notice: When using a command do not include "<" and ">".\n' +
@@ -347,24 +347,29 @@ handleCmdItem = (message) => {
 	send(message, answer, options);
 };
 
+removeSizeFromAvatarUrl = (user) => {
+	user.avatarURL = user.avatarURL.replace(user.avatarURL.substring(user.avatarURL.indexOf('size='), user.avatarURL.length), '');
+	return user;
+};
+
 loadUserAvatars = (rows, avatarSize) => {
 	
 	// Iterate all players (rows)
 	let avatarPromises = [];
 	rows.forEach((row) => {
-		if (row.avatarUrl !== undefined) {
-			row.avatarUrl += 'size=' + avatarSize;
-			avatarPromises.push(Jimp.read(row.avatarUrl)
+		if (row.avatarURL !== undefined && row.avatarURL !== null) {
+			row.avatarURL += 'size=' + avatarSize;
+			avatarPromises.push(Jimp.read(row.avatarURL)
 				.then((avatar) => {
-					// logger.info('Successfully loaded user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
+					logger.info('Successfully loaded user discord avatar: ' + row.avatarURL);
 					row.avatar = avatar;
 					return new Promise((resolve, reject) => {
 						resolve(avatar);
 					});
 				})
 				.catch(err => {
-					logger.info('Could not load user discord avatar ' + row.discord_id + ' for timezone map: ' + row.avatarUrl);
-					row.avatarUrl = undefined;
+					logger.info('Could not load user discord avatar: ' + row.avatarURL);
+					row.avatarURL = undefined;
 				})
 			);
 		}
@@ -809,7 +814,7 @@ handleCmdSet = (message) => {
 	} else {
 		// let fileName = 'data/players/' + playerName.toLowerCase() + '.json';
 		let sqlAttributeName;
-		if (attributeName === 'image' || attributeName === 'img') {
+		if (attributeName === 'image' || attributeName === 'img' || attributeName === 'picture' || attributeName === 'avatar') {
 			if (message.attachments.length === 0) {
 				answer = 'There is no picture attached to your message.';
 				send(message, answer);
@@ -1082,11 +1087,11 @@ getUserAvatarUrls = (rows) => {
 		// logger.info('getUserAvatarUrls: row.discord_id: ' + row.discord_id);
 		const user = bot.users.get(row.discord_id);
 		if (user !== undefined) {
-			row.avatarUrl = user.avatarURL;
-			if (row.avatarUrl === null) {
-				row.avatarUrl = undefined;
+			row.avatarURL = user.avatarURL;
+			if (row.avatarURL === null) {
+				row.avatarURL = undefined;
 			} else {
-				row.avatarUrl = row.avatarUrl.replace(row.avatarUrl.substring(row.avatarUrl.indexOf('size='), row.avatarUrl.length), '');
+				row = removeSizeFromAvatarUrl(row);
 			}
 		}
 	});
@@ -1134,6 +1139,70 @@ handleCmdTimezones = (message) => {
 	});
 };
 
+handleCmdSpank = (message) => {
+    let args = message.content.substring(4).split(' ');
+	let answer;
+	
+	let player = message.author;
+	
+	if (message.mentions.members === null) {
+		logger.info('Player not found in message. Cancel request.');
+		answer = 'Player not found in message. Is this a private chat?';
+		send(message, answer);
+		return;
+	}
+	
+	let otherPlayer = message.mentions.users.first();
+	
+	if (otherPlayer === undefined || otherPlayer === null) {
+		answer = 'Player is unknown. Did you write him correctly?';
+		send(message, answer);
+		return;
+	}
+	if (!player.avatarURL) {
+		answer = 'You don\'t have a discord avatar.';
+		send(message, answer);
+		return;
+	}
+	if (!otherPlayer.avatarURL) {
+		answer = otherPlayer.name + ' has no discord avatar.';
+		send(message, answer);
+		return;
+	}
+	logger.info('handleCmdSpank ' + player.id + ' => ' + otherPlayer.id);
+	
+	player = removeSizeFromAvatarUrl({avatarURL: player.avatarURL});
+	otherPlayer = removeSizeFromAvatarUrl({avatarURL: otherPlayer.avatarURL});
+	
+	let imagePromise = Jimp.read('./img/spank.jpg');             // 934 x 1344
+	let avatarPromises = loadUserAvatars([player, otherPlayer], 256);
+	
+	let xMe = 299;
+	let yMe = 149;
+	let xOther = 600;
+	let yOther = 404;
+	
+	Promise.all([imagePromise].concat(avatarPromises)).then((values) => {
+		
+		const image = values[0];
+		
+		// Add user avatars
+		image.blit(values[1], xMe, yMe);
+		image.blit(values[2], xOther, yOther);
+		
+		// Save on server
+		image.write('./img/spank-result.jpg');
+		
+		send(message, '', {files: ['./img/spank-result.jpg']});
+		logger.info('Spank image created.');
+	}).catch(err => {
+		logger.info('Error while resolving user avatar and image creation promises: ' + err);
+		answer =  'Could not load user avatars.';
+		send(message, answer);
+		return;
+	});
+};
+
 bot.on('message', message => {
 	
 	// message.content = message.content.toLowerCase();
@@ -1169,6 +1238,7 @@ bot.on('message', message => {
 				handleCmdPlayer(message);
 				break;
             case 'rank':
+            case 'ranking':
 				handleCmdRank(message);
 				break;
             case 'set':
@@ -1211,6 +1281,10 @@ bot.on('message', message => {
             case 'timezone':
             case 'timezones':
 				handleCmdTimezones(message);
+				break;
+            case 'spank':
+            case 'spanking':
+				handleCmdSpank(message);
 				break;
 			default:
 				send(message, 'Sorry, I don\'t know the command ***' + cmd + '***.\nType *sao help* for a list of the available commands.');
