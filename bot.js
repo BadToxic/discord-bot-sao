@@ -1174,21 +1174,32 @@ handleCmdSpank = (message) => {
 	player = removeSizeFromAvatarUrl({avatarURL: player.avatarURL});
 	otherPlayer = removeSizeFromAvatarUrl({avatarURL: otherPlayer.avatarURL});
 	
-	let imagePromise = Jimp.read('./img/spank.jpg');             // 934 x 1344
-	let avatarPromises = loadUserAvatars([player, otherPlayer], 256);
-	
 	let xMe = 299;
 	let yMe = 149;
 	let xOther = 600;
 	let yOther = 404;
+	const avatarSize = 256;
+	
+	let imagePromise = Jimp.read('./img/spank.jpg');             // 934 x 1344
+	let avatarPromises = loadUserAvatars([player, otherPlayer], avatarSize);
+	
 	
 	Promise.all([imagePromise].concat(avatarPromises)).then((values) => {
 		
 		const image = values[0];
+		let me = values[1];
+		let other = values[2];
+		
+		if (me.bitmap.width < avatarSize) {
+			me.resize(avatarSize, avatarSize);
+		}
+		if (other.bitmap.width < avatarSize) {
+			other.resize(avatarSize, avatarSize);
+		}
 		
 		// Add user avatars
-		image.blit(values[1], xMe, yMe);
-		image.blit(values[2], xOther, yOther);
+		image.blit(me, xMe, yMe);
+		image.blit(other, xOther, yOther);
 		
 		// Save on server
 		image.write('./img/spank-result.jpg');
