@@ -7,7 +7,8 @@ const Jimp = require('jimp');
 // let XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 // let $ = require('jquery');
 
-const sao = require('./sao-if/sao-if.js');
+const sao = require('./sao-if/sao-if.js'); // Sword Art Online: Integral Factor
+const cr = require('./cr/cr.js'); // Clash Royale
 
 const DISCORD_MESSAGE_MAX_LENGTH = 2000;
 
@@ -360,5 +361,7 @@ bot.on('message', (message) => {
          }
      } else if (message.content.substring(0, 3).toLowerCase() === 'sao') {
         sao.handle(controller, message);
+     } else if (message.content.substring(0, 2).toLowerCase() === 'cr') {
+        cr.handle(controller, message);
      }
 });
