@@ -222,7 +222,7 @@ sao_createProfileCard = (row) => {
 		if (row.sao_id || row.sao_alt_id) {
 			promises.push(Jimp.read(sao_imgPath + 'profile/profile-flag.png'));     //    47 x 47
 		}
-		if (row.utc) {
+		if (row.utc || row.utc === 0) {
 			promises.push(Jimp.read(sao_imgPath + 'profile/profile-map.png'));     //    47 x 47
 		}
 			
