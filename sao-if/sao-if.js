@@ -976,7 +976,7 @@ const sao = (controller, message) => {
 		case 'time':
 		case 'timezone':
 		case 'timezones':
-			sao_handleCmdTimezones(TABLE_PLAYERS, message);
+			handleCmdTimezones(TABLE_PLAYERS, message);
 			break;
 		case 'spank':
 		case 'spanking':
