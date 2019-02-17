@@ -21,7 +21,8 @@ const skills = require('./data/skills.json');
 const mocks = require('./data/mocks.json');
 
 const TABLE_PLAYERS = 'saoifplayers';
-const imgPath = './sao-if/img/'
+const sao_imgPath = './sao-if/img/';
+const sao_maxLevel = 100; 		// The highest level a player can reach
 
 const useMock = false;
 
@@ -165,7 +166,7 @@ sao_handleCmdMob = (message, boss) => {
 							  'and can be found at: ***' + mob.maps.join('***, ***') + '***';
 			options = {
 				files: [
-					imgPath + 'mobs/' + mobName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
+					sao_imgPath + 'mobs/' + mobName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
 				]
 			}
 		}
@@ -191,7 +192,7 @@ sao_handleCmdItem = (message) => {
 			answer = '**' + itemName + '** is droped by: ***' + Object.keys(mobsWithItem).join('***, ***') + '***';
 			/*options = {
 				files: [
-					imgPath + 'items/' + itemName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
+					sao_imgPath + 'items/' + itemName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
 				]
 			}*/
 		}
@@ -201,9 +202,9 @@ sao_handleCmdItem = (message) => {
 
 sao_createProfileCard = (row) => {
 	return new Promise(function(resolve, reject) {
-		let topPromise = Jimp.read(imgPath + 'profile/profile-top.png');             // 498 x 88
-		let bottomPromise = Jimp.read(imgPath + 'profile/profile-bottom.png'); // 498 x 34
-		let rowPromise = Jimp.read(imgPath + 'profile/profile-row.png');           // 498 x 54
+		let topPromise = Jimp.read(sao_imgPath + 'profile/profile-top.png');             // 498 x 88
+		let bottomPromise = Jimp.read(sao_imgPath + 'profile/profile-bottom.png'); // 498 x 34
+		let rowPromise = Jimp.read(sao_imgPath + 'profile/profile-row.png');           // 498 x 54
 		let fontPromise = Jimp.loadFont(fontPath);
 		
 		options = undefined;
@@ -216,13 +217,13 @@ sao_createProfileCard = (row) => {
 		let promises = [topPromise, bottomPromise, rowPromise, fontPromise];	
 		
 		if (row.sao_level) {
-			promises.push(Jimp.read(imgPath + 'profile/profile-sword.png'));     //    47 x 47
+			promises.push(Jimp.read(sao_imgPath + 'profile/profile-sword.png'));     //    47 x 47
 		}
 		if (row.sao_id || row.sao_alt_id) {
-			promises.push(Jimp.read(imgPath + 'profile/profile-flag.png'));     //    47 x 47
+			promises.push(Jimp.read(sao_imgPath + 'profile/profile-flag.png'));     //    47 x 47
 		}
 		if (row.utc) {
-			promises.push(Jimp.read(imgPath + 'profile/profile-map.png'));     //    47 x 47
+			promises.push(Jimp.read(sao_imgPath + 'profile/profile-map.png'));     //    47 x 47
 		}
 			
 		if (row.sao_image) {
@@ -331,7 +332,7 @@ sao_createProfileCard = (row) => {
 					}
 		
 					// Save on server
-					const cardPath = imgPath + 'card-' + row.discord_name + '.png';
+					const cardPath = sao_imgPath + 'card-' + row.discord_name + '.png';
 					card.write(cardPath);
 					
 					resolve({files: [cardPath]});
@@ -453,9 +454,9 @@ sao_createRankList = (rows) => {
 			return;
 		}
 		
-		let topPromise = Jimp.read(imgPath + 'rank/rank-top.png');             // 347 x 34
-		let bottomPromise = Jimp.read(imgPath + 'rank/rank-bottom.png'); // 347 x 35
-		let rowPromise = Jimp.read(imgPath + 'rank/rank-row.png');           // 347 x 43
+		let topPromise = Jimp.read(sao_imgPath + 'rank/rank-top.png');             // 347 x 34
+		let bottomPromise = Jimp.read(sao_imgPath + 'rank/rank-bottom.png'); // 347 x 35
+		let rowPromise = Jimp.read(sao_imgPath + 'rank/rank-row.png');           // 347 x 43
 		let fontPromise = Jimp.loadFont(fontPath);
 		
 		options = undefined;
@@ -535,7 +536,7 @@ sao_createRankList = (rows) => {
 						});
 						
 						// Save on server
-						const rankListPath = imgPath + 'rank-list.png';
+						const rankListPath = sao_imgPath + 'rank-list.png';
 						rankList.write(rankListPath);
 						logger.info('Saved rank list picture: ' + rankListPath);
 						
@@ -638,6 +639,16 @@ sao_handleCmdSet = (message) => {
 				attributeValue = messageAttachment.url;
 			});
 		} else if (attributeName === 'level' || attributeName === 'lv' || attributeName === 'lvl') {
+			if (isNaN(attributeValue)) {
+				answer = 'The level must be a number.';
+				send(message, answer);
+				return;
+			}
+			if (attributeValue < 1 || attributeValue > sao_maxLevel) {
+				answer = 'The level must be between 1 and ' + sao_maxLevel + '.';
+				send(message, answer);
+				return;
+			}
 			sqlAttributeName = 'sao_level';
 		}  else if (attributeName === 'time' || attributeName === 'timezone' || attributeName === 'utc') {
 			sqlAttributeName = 'utc';
@@ -705,7 +716,7 @@ sao_handleCmdMap = (message) => {
 			answer += '\nNPCs: ***' + map.npcs.join('***, ***') + '***\nPortals: ***' + map.portals.join('***, ***') + '***';
 			options = {
 				files: [
-					imgPath + 'maps/' + mapName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
+					sao_imgPath + 'maps/' + mapName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.jpg'
 				]
 			}
 		}
@@ -784,7 +795,7 @@ sao_handleCmdSkill = (message) => {
 			answer = '***[' + skillName + '] ' + skill.person + '***';
 			options = {
 				files: [
-					imgPath + 'skills/' + skillName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.png'
+					sao_imgPath + 'skills/' + skillName.toLowerCase().split(' - ').join('-').split(' ').join('-') + '.png'
 				]
 			}
 		}
@@ -793,10 +804,10 @@ sao_handleCmdSkill = (message) => {
 };
 
 sao_handleCmdMeme = (message) => {
-	sendRandomFile(message, imgPath + 'memes/');
+	sendRandomFile(message, sao_imgPath + 'memes/');
 };
 sao_handleCmdGirl = (message) => {
-	sendRandomFile(message, imgPath + 'girls/');
+	sendRandomFile(message, sao_imgPath + 'girls/');
 };
 
 
@@ -841,7 +852,7 @@ sao_handleCmdSpank = (message) => {
 	let yOther = 404;
 	const avatarSize = 256;
 	
-	let imagePromise = Jimp.read(imgPath + 'spank.jpg');             // 934 x 1344
+	let imagePromise = Jimp.read(sao_imgPath + 'spank.jpg');             // 934 x 1344
 	let avatarPromises = loadUserAvatars([player, otherPlayer], avatarSize);
 	
 	
@@ -863,9 +874,9 @@ sao_handleCmdSpank = (message) => {
 		image.blit(other, xOther, yOther);
 		
 		// Save on server
-		image.write(imgPath + 'spank-result.jpg');
+		image.write(sao_imgPath + 'spank-result.jpg');
 		
-		send(message, '', {files: [imgPath + 'spank-result.jpg']});
+		send(message, '', {files: [sao_imgPath + 'spank-result.jpg']});
 		logger.info('Spank image created.');
 	}).catch(err => {
 		logger.info('Error while resolving user avatar and image creation promises: ' + err);
