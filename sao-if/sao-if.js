@@ -651,6 +651,16 @@ sao_handleCmdSet = (message) => {
 			}
 			sqlAttributeName = 'sao_level';
 		}  else if (attributeName === 'time' || attributeName === 'timezone' || attributeName === 'utc') {
+			if (isNaN(attributeValue)) {
+				answer = 'UTC must be a number.';
+				send(message, answer);
+				return;
+			}
+			if (attributeValue < -12 || attributeValue > 12) {
+				answer = 'UTC must be between -12 and ' + 12 + '.';
+				send(message, answer);
+				return;
+			}
 			sqlAttributeName = 'utc';
 		} else if (attributeName === 'id') {
 			sqlAttributeName = 'sao_id';
