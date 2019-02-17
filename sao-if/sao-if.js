@@ -875,7 +875,7 @@ handleCmdSpank = (message) => {
 	});
 };
 
-init = (controller) => {
+initSAO = (controller) => {
 	logger = controller.logger;
 	Jimp = controller.Jimp;
 	send = controller.send;
@@ -892,7 +892,7 @@ init = (controller) => {
 };
 
 const sao = (controller, message) => {
-	init(controller);
+	initSAO(controller);
 	
 	let args = message.content.substring(4).split(' ');
 	logger.info(args);
