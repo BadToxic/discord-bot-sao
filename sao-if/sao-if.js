@@ -58,7 +58,7 @@ const help =
 '**sao [meme, memes]**  |  Get a random SAO meme\n' +
 '**sao [girl, girls]**  |  Get a random SAO girl';
 
-getBosses = () => {
+sao_getBosses = () => {
 	let bosses = {};
 	for (let mobName in mobs) {
 		if (mobs.hasOwnProperty(mobName)) {
@@ -71,7 +71,7 @@ getBosses = () => {
 	return bosses;
 };
 
-getMobsWithItem = (itemName) => {
+sao_getMobsWithItem = (itemName) => {
 	let mobsWithItem = {};
 	let foundMobs = false;
 	for (let mobName in mobs) {
@@ -86,7 +86,7 @@ getMobsWithItem = (itemName) => {
 	return foundMobs ? mobsWithItem : undefined;
 };
 
-getSkillsWithPerson = (personName) => {
+sao_getSkillsWithPerson = (personName) => {
 	let skillsWithPerson = {};
 	let foundSkills = false;
 	for (let skillName in skills) {
@@ -100,7 +100,7 @@ getSkillsWithPerson = (personName) => {
 	}
 	return foundSkills ? skillsWithPerson : undefined;
 };
-getSkillsForWeapon = (weaponName) => {
+sao_getSkillsForWeapon = (weaponName) => {
 	let skillsForWeapon = {};
 	let foundSkills = false;
 	for (let skillName in skills) {
@@ -114,7 +114,7 @@ getSkillsForWeapon = (weaponName) => {
 	}
 	return foundSkills ? skillsForWeapon : undefined;
 };
-getSkillsWithStars = (starNumber) => {
+sao_getSkillsWithStars = (starNumber) => {
 	let skillsWithStars = {};
 	let foundSkills = false;
 	for (let skillName in skills) {
@@ -129,7 +129,7 @@ getSkillsWithStars = (starNumber) => {
 	return foundSkills ? skillsWithStars : undefined;
 };
 
-getMobsOnMap = (mapName) => {
+sao_getMobsOnMap = (mapName) => {
 	let mobsOnMap = {};
 	let foundMobs = false;
 	for (let mobName in mobs) {
@@ -145,12 +145,12 @@ getMobsOnMap = (mapName) => {
 };
 
 // Command handlers
-handleCmdMob = (message, boss) => {
+sao_handleCmdMob = (message, boss) => {
     let args = message.content.substring(4).split(' ');
 	let mobName = args.splice(1, args.length - 1).join(' ');
 	let answer;
 	let options;
-	let mobsToCheck = boss ? getBosses() : mobs;
+	let mobsToCheck = boss ? sao_getBosses() : mobs;
 	logger.info('handleCmdMob for (boss only: ' + boss + ') ' + mobName);
 	if (mobName === '') {
 		let mobKeys = Object.keys(mobsToCheck);
@@ -173,7 +173,7 @@ handleCmdMob = (message, boss) => {
 	send(message, answer, options);
 };
 
-handleCmdItem = (message) => {
+sao_handleCmdItem = (message) => {
     let args = message.content.substring(4).split(' ');
 	let itemName = args.splice(1, args.length - 1).join(' ');
 	let answer;
@@ -184,7 +184,7 @@ handleCmdItem = (message) => {
 		answer = 'List of all ' + itemKeys.length + ' registered items:\n***' + itemKeys.join('***, ***') + '***'
 	} else {
 		itemName = utilText.capitalizeFirstLetters(itemName);
-		let mobsWithItem = getMobsWithItem(itemName);
+		let mobsWithItem = sao_getMobsWithItem(itemName);
 		if (mobsWithItem === undefined) {
 			answer = 'Item ***' + itemName + '*** is unknown. Did you write it correctly?';
 		} else {
@@ -199,7 +199,7 @@ handleCmdItem = (message) => {
 	send(message, answer, options);
 };
 
-createProfileCard = (row) => {
+sao_createProfileCard = (row) => {
 	return new Promise(function(resolve, reject) {
 		let topPromise = Jimp.read(imgPath + 'profile/profile-top.png');             // 498 x 88
 		let bottomPromise = Jimp.read(imgPath + 'profile/profile-bottom.png'); // 498 x 34
@@ -344,7 +344,7 @@ createProfileCard = (row) => {
 		});
 	}); 
 };
-handleCmdPlayer = (message) => {
+sao_handleCmdPlayer = (message) => {
     let args = message.content.substring(4).split(' ');
 	let playerID = args.splice(1, args.length - 1).join(' ');
 	logger.info('handleCmdPlayer for ' + playerID);
@@ -429,7 +429,7 @@ handleCmdPlayer = (message) => {
 						/*if (row.utc) {
 							answer += 'Timezone: UTC ' + (row.utc >= 0 ? '+' : '') + row.utc + '\n';
 						}*/
-						createProfileCard(row).then((options) => {
+						sao_createProfileCard(row).then((options) => {
 							send(message, answer, options);
 						});
 					}
@@ -440,7 +440,7 @@ handleCmdPlayer = (message) => {
 	}
 };
 
-createRankList = (rows) => {
+sao_createRankList = (rows) => {
 	
 	let avatarSize = 32;
 	let avatarPromises = loadUserAvatars(rows, avatarSize);
@@ -557,7 +557,7 @@ createRankList = (rows) => {
 		return afterAvatarsLoaded();
 	}); 
 };
-handleCmdRank = (message) => {
+sao_handleCmdRank = (message) => {
 		
 	const db = getDbClient();
 	db.connect(connectionErr => {
@@ -594,7 +594,7 @@ handleCmdRank = (message) => {
 					getUserAvatarUrls(result.rows/*.filter(row => row.sao_level !== null)*/);
 				}
 				
-				createRankList(result.rows).then((options) => {
+				sao_createRankList(result.rows).then((options) => {
 					// logger.info('Finished createRankList with options: ' + options);
 					if (options !== undefined) {
 						answer = '';
@@ -608,7 +608,7 @@ handleCmdRank = (message) => {
 	});
 };
 
-handleCmdSet = (message) => {
+sao_handleCmdSet = (message) => {
     let args = message.content.substring(4).split(' ');
 	let attributeName = args[1];
 	let attributeValue = args[2];
@@ -682,7 +682,7 @@ handleCmdSet = (message) => {
 	send(message, answer);
 };
 
-handleCmdMap = (message) => {
+sao_handleCmdMap = (message) => {
     let args = message.content.substring(4).split(' ');
 	let mapName = args.splice(1, args.length - 1).join(' ');
 	let answer;
@@ -696,7 +696,7 @@ handleCmdMap = (message) => {
 		if (map === undefined) {
 			answer = 'Map ***' + mapName + '*** is unknown. Did you write it correctly?';
 		} else {
-			let mobsOnMap = getMobsOnMap(mapName);
+			let mobsOnMap = sao_getMobsOnMap(mapName);
 			if (mobsOnMap === undefined) {
 				answer = 'Map ***' + mapName + '*** dosn\'t hold any mobs.';
 			} else {
@@ -713,7 +713,7 @@ handleCmdMap = (message) => {
 	send(message, answer, options);
 };
 
-handleCmdSkill = (message) => {
+sao_handleCmdSkill = (message) => {
     let args = message.content.substring(4).split(' ');
 	let arg1 = args[1]; // eg. 'person'
 	let arg2 = args[2]; // eg. person's name
@@ -730,7 +730,7 @@ handleCmdSkill = (message) => {
 			answer = 'Name the person you want to know the available skills of.'
 		} else {
 			let person = utilText.capitalizeFirstLetter(arg2);
-			let skillsOfPerson = getSkillsWithPerson(person);
+			let skillsOfPerson = sao_getSkillsWithPerson(person);
 			if (skillsOfPerson === undefined) {
 				answer = 'There are no skills registered for **' + person + '**.';
 			} else {
@@ -749,7 +749,7 @@ handleCmdSkill = (message) => {
 			} else if (weapon === 'Axe' || weapon === 'Spear') {
 				weapon = '2H ' + weapon;
 			}
-			let skillsForWeapon = getSkillsForWeapon(weapon);
+			let skillsForWeapon = sao_getSkillsForWeapon(weapon);
 			if (skillsForWeapon === undefined) {
 				answer = 'There are no known weapon type **' + weapon + '**.';
 			} else {
@@ -766,7 +766,7 @@ handleCmdSkill = (message) => {
 			if (starNumber === NaN || starNumber < 1 || starNumber > 4) {
 				answer = starNumber + ' is not a valid number. The allowed range is 1 - 4.'
 			} else {
-				let skillsWithStars = getSkillsWithStars(starNumber);
+				let skillsWithStars = sao_getSkillsWithStars(starNumber);
 				if (skillsWithStars === undefined) {
 					answer = 'There are no skills with **' + starNumber + '** stars registered.';
 				} else {
@@ -792,15 +792,15 @@ handleCmdSkill = (message) => {
 	send(message, answer, options);
 };
 
-handleCmdMeme = (message) => {
+sao_handleCmdMeme = (message) => {
 	sendRandomFile(message, imgPath + 'memes/');
 };
-handleCmdGirl = (message) => {
+sao_handleCmdGirl = (message) => {
 	sendRandomFile(message, imgPath + 'girls/');
 };
 
 
-handleCmdSpank = (message) => {
+sao_handleCmdSpank = (message) => {
     let args = message.content.substring(4).split(' ');
 	let answer;
 	
@@ -875,7 +875,7 @@ handleCmdSpank = (message) => {
 	});
 };
 
-initSAO = (controller) => {
+sao_init = (controller) => {
 	logger = controller.logger;
 	Jimp = controller.Jimp;
 	send = controller.send;
@@ -892,7 +892,7 @@ initSAO = (controller) => {
 };
 
 const sao = (controller, message) => {
-	initSAO(controller);
+	sao_init(controller);
 	
 	let args = message.content.substring(4).split(' ');
 	logger.info(args);
@@ -910,56 +910,56 @@ const sao = (controller, message) => {
 		case 'player':
 		case 'players':
 		case 'info':
-			handleCmdPlayer(message);
+			sao_handleCmdPlayer(message);
 			break;
 		case 'rank':
 		case 'ranking':
-			handleCmdRank(message);
+			sao_handleCmdRank(message);
 			break;
 		case 'set':
-			handleCmdSet(message);
+			sao_handleCmdSet(message);
 			break;
 		case 'mob':
 		case 'mobs':
 		case 'monster':
 		case 'monsters':
-			handleCmdMob(message, false);
+			sao_handleCmdMob(message, false);
 			break;
 		case 'boss':
 		case 'bosses':
-			handleCmdMob(message, true);
+			sao_handleCmdMob(message, true);
 			break;
 		case 'item':
 		case 'items':
 		case 'drop':
 		case 'drops':
-			handleCmdItem(message);
+			sao_handleCmdItem(message);
 			break;
 		case 'map':
 		case 'maps':
-			handleCmdMap(message);
+			sao_handleCmdMap(message);
 			break;
 		case 'skill':
 		case 'skills':
-			handleCmdSkill(message);
+			sao_handleCmdSkill(message);
 			break;
 		case 'meme':
 		case 'memes':
-			handleCmdMeme(message);
+			sao_handleCmdMeme(message);
 			break;
 		case 'girl':
 		case 'girls':
-			handleCmdGirl(message);
+			sao_handleCmdGirl(message);
 			break;
 		case 'utc':
 		case 'time':
 		case 'timezone':
 		case 'timezones':
-			handleCmdTimezones(TABLE_PLAYERS, message);
+			sao_handleCmdTimezones(TABLE_PLAYERS, message);
 			break;
 		case 'spank':
 		case 'spanking':
-			handleCmdSpank(message);
+			sao_handleCmdSpank(message);
 			break;
 		default:
 			send(message, 'Sorry, I don\'t know the command ***' + cmd + '***.\nType *sao help* for a list of the available commands.');
