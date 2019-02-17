@@ -245,7 +245,7 @@ sao_createProfileCard = (row) => {
 			if (row.sao_alt_id) {
 				rowNumber++;
 			}
-			if (row.utc) {
+			if (row.utc || row.utc === 0) {
 				rowNumber++;
 			}
 			
@@ -311,7 +311,7 @@ sao_createProfileCard = (row) => {
 					if (row.sao_alt_id) {
 						createRow(values[iconPromiseIndex++], '2nd ID: ' + row.sao_alt_id);
 					}
-					if (row.utc) {
+					if (row.utc || row.utc === 0) {
 						createRow(values[iconPromiseIndex], 'Timezone: UTC ' + (row.utc > 0 ? '+' : '') + row.utc);
 					}
 					
