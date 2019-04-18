@@ -14,5 +14,8 @@ docker-compose.yml
 # Links
 *.lnk
 
+# Authentication
+auth.json
+
 # Other
 postgresSetup.txt
