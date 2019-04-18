@@ -26,7 +26,7 @@ const sao_maxLevel = 100; 		// The highest level a player can reach
 
 const useMock = false;
 
-const availablePlayerAttributes = ['id', 'altid', 'img', 'image', 'picture', 'avatar', 'level', 'lv', 'lvl', 'time', 'timezone', 'utc'];
+const availablePlayerAttributes = ['id', 'altid', 'guild', 'altguild', 'img', 'image', 'picture', 'avatar', 'level', 'lv', 'lvl', 'time', 'timezone', 'utc'];
 
 const help = 
 'Notice: When using a command do not include "<" and ">".\n' +
@@ -219,7 +219,7 @@ sao_createProfileCard = (row) => {
 		if (row.sao_level) {
 			promises.push(Jimp.read(sao_imgPath + 'profile/profile-sword.png'));     //    47 x 47
 		}
-		if (row.sao_id || row.sao_alt_id) {
+		if (row.sao_id || row.sao_alt_id || row.sao_guild || row.sao_alt_guild) {
 			promises.push(Jimp.read(sao_imgPath + 'profile/profile-flag.png'));     //    47 x 47
 		}
 		if (row.utc || row.utc === 0) {
@@ -243,6 +243,12 @@ sao_createProfileCard = (row) => {
 				rowNumber++;
 			}
 			if (row.sao_alt_id) {
+				rowNumber++;
+			}
+			if (row.sao_guild) {
+				rowNumber++;
+			}
+			if (row.sao_alt_guild) {
 				rowNumber++;
 			}
 			if (row.utc || row.utc === 0) {
@@ -304,12 +310,24 @@ sao_createProfileCard = (row) => {
 					}
 					if (row.sao_id) {
 						createRow(values[iconPromiseIndex], 'ID: ' + row.sao_id);
-						if (!row.sao_alt_id) { // Would use the same icon
+						if (!row.sao_alt_id && !row.sao_guild && !row.sao_alt_guild) { // Would use the same icon
 							iconPromiseIndex++;
 						}
 					}
 					if (row.sao_alt_id) {
-						createRow(values[iconPromiseIndex++], '2nd ID: ' + row.sao_alt_id);
+						createRow(values[iconPromiseIndex], '2nd ID: ' + row.sao_alt_id);
+						if (!row.sao_guild && !row.sao_alt_guild) { // Would use the same icon
+							iconPromiseIndex++;
+						}
+					}
+					if (row.sao_guild) {
+						createRow(values[iconPromiseIndex], 'Guild: ' + row.sao_guild);
+						if (!row.sao_alt_guild) { // Would use the same icon
+							iconPromiseIndex++;
+						}
+					}
+					if (row.sao_alt_guild) {
+						createRow(values[iconPromiseIndex++], '2nd Guild: ' + row.sao_alt_guild);
 					}
 					if (row.utc || row.utc === 0) {
 						createRow(values[iconPromiseIndex], 'Timezone: UTC ' + (row.utc > 0 ? '+' : '') + row.utc);
@@ -666,6 +684,10 @@ sao_handleCmdSet = (message) => {
 			sqlAttributeName = 'sao_id';
 		} else if (attributeName === 'altid') {
 			sqlAttributeName = 'sao_alt_id';
+		} else if (attributeName === 'guild') {
+			sqlAttributeName = 'sao_guild';
+		} else if (attributeName === 'altguild') {
+			sqlAttributeName = 'sao_alt_guild';
 		}
 		
 		const db = getDbClient();
