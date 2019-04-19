@@ -382,7 +382,7 @@ sao_handleCmdPlayer = (message) => {
 				const query = 'SELECT discord_name FROM ' + TABLE_PLAYERS + ';';
 				db.query(query, (err, result) => {
 					if (err) {
-						logger.info('Error on querry!');
+						logger.info('Error on query: ' + query);
 						logger.info(err);
 						answer = 'Error: No players found.';
 					} else if (result.rowCount === 0) {
@@ -426,7 +426,7 @@ sao_handleCmdPlayer = (message) => {
 				const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE discord_id = \'' + player.id + '\';';
 				db.query(query, (err, result) => {
 					if (err) {
-						logger.info('Error on querry!');
+						logger.info('Error on query: ' + query);
 						logger.info(err);
 						answer = 'Error: No info for player ***' + player.username + '*** found.';
 					} else if (result.rowCount === 0) {
@@ -466,7 +466,7 @@ sao_handleCmdGuild = (message) => {
 				const query = 'SELECT name, id FROM ' + TABLE_GUILDS + ';';
 				db.query(query, (err, result) => {
 					if (err) {
-						logger.info('Error on querry!');
+						logger.info('Error on query: ' + query);
 						logger.info(err);
 						answer = 'Error: No guilds found.';
 					} else if (result.rowCount === 0) {
@@ -501,7 +501,7 @@ sao_handleCmdGuild = (message) => {
 				const query = 'SELECT * FROM ' + TABLE_GUILDS + ' WHERE ' + condition + ';';
 				db.query(query, (err, result) => {
 					if (err) {
-						logger.info('Error on querry!');
+						logger.info('Error on query: ' + query);
 						logger.info(err);
 						answer = 'Error: No info for guild ***' + guildIdOrName + '*** found.';
 					} else if (result.rowCount === 0) {
@@ -510,7 +510,7 @@ sao_handleCmdGuild = (message) => {
 						const row = result.rows[0];
 						answer = '';
 						if (row.name) {
-							answer = '**' + row.name + '** ';
+							answer = '**' + row.name.trim() + '** ';
 						}
 						if (row.id) {
 							answer += '**' + row.id + '** ';
@@ -519,58 +519,58 @@ sao_handleCmdGuild = (message) => {
 							answer += '*Lv ' + row.level + '* ';
 						}
 						if (row.leader_id) {
-							answer += '\nLeader: ';
-							const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_id = ' + row.leader_id + ' OR sao_alt_id = ' + row.leader_id + ';';
-							db.query(query, (err, leaderResult) => {
+							const leaderQuery = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_id = ' + row.leader_id + ' OR sao_alt_id = ' + row.leader_id + ';';
+							db.query(leaderQuery, (err, leaderResult) => {
+								answer += '\nLeader: ';
 								if (err) {
-									logger.info('Error on querry!');
+									logger.info('Error on leader query: ' + leaderQuery);
 									logger.info(err);
 								} else if (leaderResult.rowCount === 0) {
 									logger.info('Search Guild Leader: No info for player with id ' + row.leader_id + ' found!');
 								} else {
 									const leaderRow = leaderResult.rows[0];
 									if (leaderRow.discord_name) {
-										answer += '**' + leaderRow.discord_name + '** ';
+										answer += '**' + leaderRow.discord_name.trim() + '** ';
 									}
 								}
+								answer += '(**' +row.leader_id + '**)';
 							});
-							answer += '(**' +row.leader_id + '**)';
 						}
 						if (row.subleader_id) {
-							answer += '\nSub-Leader: ';
-							const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_id = ' + row.subleader_id + ' OR sao_alt_id = ' + row.subleader_id + ';';
-							db.query(query, (err, subleaderResult) => {
+							const subLeaderQuery = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_id = ' + row.subleader_id + ' OR sao_alt_id = ' + row.subleader_id + ';';
+							db.query(subLeaderQuery, (err, subleaderResult) => {
+								answer += '\nSub-Leader: ';
 								if (err) {
-									logger.info('Error on querry!');
+									logger.info('Error on sub leader query: ' + subLeaderQuery);
 									logger.info(err);
 								} else if (subleaderResult.rowCount === 0) {
 									logger.info('Search Guild Sub-Leader: No info for player with id ' + row.subleader_id + ' found!');
 								} else {
 									const subleaderRow = subleaderResult.rows[0];
 									if (subleaderRow.discord_name) {
-										answer += '**' + subleaderRow.discord_name + '** ';
+										answer += '**' + subleaderRow.discord_name.trim() + '** ';
 									}
 								}
+								answer += '(**' +row.subleader_id + '**)';
 							});
-							answer += '(**' +row.subleader_id + '**)';
 						}
-						const query = 'SELECT discord_name FROM ' + TABLE_PLAYERS + ' WHERE sao_guild = ' + row.id + ' OR sao_alt_guild = ' + row.id + ';';
-						db.query(query, (err, membersResult) => {
+						const memberQuery = 'SELECT discord_name FROM ' + TABLE_PLAYERS + ' WHERE sao_guild = ' + row.id + ' OR sao_alt_guild = ' + row.id + ';';
+						db.query(memberQuery, (err, membersResult) => {
 							if (err) {
-								logger.info('Error on querry!');
+								logger.info('Error on member query: ' + memberQuery);
 								logger.info(err);
 							} else if (membersResult.rowCount === 0) {
 								logger.info('Search Guild Members: No members in guild with id ' + row.id + ' found!');
 							} else if (membersResult.rows.length > 0) {
 								answer += '\nMembers: ';
 								membersResult.rows.forEach((member) => {
-									answer += '*' + member.discord_name + '* ';
+									answer += '*' + member.discord_name.trim() + '* ';
 								});
 							}
+							db.end();
+							send(message, answer);
 						});
-						send(message, answer);
 					}
-					db.end();
 				});
 			}
         });
@@ -707,7 +707,7 @@ sao_handleCmdRank = (message) => {
 			const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_level IS NOT NULL ORDER BY sao_level DESC;'
 			db.query(query, (err, result) => {
 				if (err) {
-					logger.info('Error on querry!');
+					logger.info('Error on query: ' + query);
 					logger.info(err);
 					answer = 'Error: No player ranks found.';
 				} else if (result.rowCount === 0) {
@@ -818,7 +818,7 @@ sao_handleCmdSet = (message) => {
 					+ 'DO UPDATE SET discord_name = Excluded.discord_name, updated = Excluded.updated, ' + sqlAttributeName + ' = Excluded.' + sqlAttributeName + ';'
 				db.query(query, (err, result) => {
 					if (err) {
-						logger.info('Error on querry!');
+						logger.info('Error on query: ' + query);
 						logger.info(err);
 						answer = 'Sorry ' + player.username + ', I failed to set ' + attributeName + ' = ' + attributeValue;
 					} else {
