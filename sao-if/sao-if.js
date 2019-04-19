@@ -554,6 +554,20 @@ sao_handleCmdGuild = (message) => {
 							});
 							answer += '(**' +row.subleader_id + '**)';
 						}
+						const query = 'SELECT discord_name FROM ' + TABLE_PLAYERS + ' WHERE sao_guild = ' + row.id + ' OR sao_alt_guild = ' + row.id + ';';
+						db.query(query, (err, membersResult) => {
+							if (err) {
+								logger.info('Error on querry!');
+								logger.info(err);
+							} else if (membersResult.rowCount === 0) {
+								logger.info('Search Guild Members: No members in guild with id ' + row.id + ' found!');
+							} else if (membersResult.rows.length > 0) {
+								answer += '\nMembers: ';
+								membersResult.rows.forEach((member) => {
+									answer += '*' + member.discord_name + '* ';
+								});
+							}
+						});
 						send(message, answer);
 					}
 					db.end();
