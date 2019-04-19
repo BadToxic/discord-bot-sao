@@ -50,6 +50,9 @@ Notice: When using a command do not include "<" and ">".
 ### Item -> Mob Information
 ![Item Mob Information](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/Item-Mob%20example.png?raw=true)
 
+### Guild Information
+![Guild Information](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/guild%20info%20example.png?raw=true)
+
 ## Documentation
 
 For more information about using Node.js on Heroku, see these Dev Center articles:
