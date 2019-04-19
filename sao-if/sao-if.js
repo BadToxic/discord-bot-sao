@@ -515,6 +515,9 @@ sao_handleCmdGuild = (message) => {
 						if (row.id) {
 							answer += '**' + row.id + '** ';
 						}
+						if (row.level) {
+							answer += '*Lv ' + row.level + '* ';
+						}
 						if (row.leader_id) {
 							answer += '\nLeader: ';
 							const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_id = ' + row.leader_id + ' OR sao_alt_id = ' + row.leader_id + ';';
@@ -687,9 +690,7 @@ sao_handleCmdRank = (message) => {
 			logger.info(connectionErr);
 			send(message, answer);
 		} else {
-			// logger.info('db connected');
 			const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_level IS NOT NULL ORDER BY sao_level DESC;'
-			// logger.info(query);
 			db.query(query, (err, result) => {
 				if (err) {
 					logger.info('Error on querry!');
@@ -715,7 +716,6 @@ sao_handleCmdRank = (message) => {
 				}
 				
 				sao_createRankList(result.rows).then((options) => {
-					// logger.info('Finished createRankList with options: ' + options);
 					if (options !== undefined) {
 						answer = '';
 					}
@@ -734,9 +734,8 @@ sao_handleCmdSet = (message) => {
 	let attributeValue = args[2];
 	let answer;
 	
-	const player = message.author; // message.mentions.members.first();
+	const player = message.author;
 	
-	// let playerName = message.author.username;
 	logger.info('handleCmdSet ' + attributeName + ' = ' + attributeValue + ' for user ' + player.username + ' (' + player.id + ')');
 	if (attributeName === undefined) {
 		answer = 'What attribute value do you want to set? Use ***sao set <attribute> <value>***';
@@ -745,7 +744,6 @@ sao_handleCmdSet = (message) => {
 	} else if (attributeValue === undefined && attributeName != 'img' && attributeName != 'image') {
 		answer = 'A value is needed. Use ***sao set <attribute> <value>***';
 	} else {
-		// let fileName = 'data/players/' + playerName.toLowerCase() + '.json';
 		let sqlAttributeName;
 		if (attributeName === 'image' || attributeName === 'img' || attributeName === 'picture' || attributeName === 'avatar') {
 			if (message.attachments.length === 0) {
@@ -799,21 +797,17 @@ sao_handleCmdSet = (message) => {
 				logger.info(connectionErr);
 				send(message, answer);
 			} else {
-				// logger.info('db connected');
 				const now = '\'' + getTimeStamp(new Date()) + '\'';
 				const query = 'INSERT INTO ' + TABLE_PLAYERS + ' (discord_id, discord_name, created, updated, ' + sqlAttributeName + ') '
 					+ 'VALUES (\'' + player.id + '\', \'' + player.username + '\', ' + now + ', ' + now + ', \'' + attributeValue + '\') '
 					+ 'ON CONFLICT (discord_id) '
 					+ 'DO UPDATE SET discord_name = Excluded.discord_name, updated = Excluded.updated, ' + sqlAttributeName + ' = Excluded.' + sqlAttributeName + ';'
-				// logger.info(query);
 				db.query(query, (err, result) => {
 					if (err) {
 						logger.info('Error on querry!');
 						logger.info(err);
 						answer = 'Sorry ' + player.username + ', I failed to set ' + attributeName + ' = ' + attributeValue;
 					} else {
-						// logger.info('result:');
-						// logger.info(result);
 						answer = 'Successfully set ' + attributeName + ' = ' + attributeValue + ' for ' + player.username;
 					}
 					send(message, answer);
