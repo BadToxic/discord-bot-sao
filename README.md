@@ -28,6 +28,8 @@ Notice: When using a command do not include "<" and ">".
 **sao [info, player, players] <*Username*>**  |  Asks for information about this user
 **sao set [id, altid, guild, altguild, img, image, picture, avatar, level, lv, lvl, time, timezone, utc] <*value*>**  |  Sets the value for my own attribute
       If you choose to set your image you have to send it in the same message instead of a value.
+**sao [guild, guilds]**  |  Lists all guilds currently registered
+**sao [guild, guilds]** <*Guildname or ID*>  |  Asks for information about this guild
 **sao rank**  |  Lists all players sorted by their level
 **sao [time, timezone, timezones, utc]**  |  Get a map of the players' timezones
 

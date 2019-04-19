@@ -21,6 +21,7 @@ const skills = require('./data/skills.json');
 const mocks = require('./data/mocks.json');
 
 const TABLE_PLAYERS = 'saoifplayers';
+const TABLE_GUILDS = 'saoifguilds';
 const sao_imgPath = './sao-if/img/';
 const sao_maxLevel = 100; 		// The highest level a player can reach
 
@@ -52,6 +53,8 @@ const help =
 '**sao [info, player, players]** <Username>  |  Asks for information about this user\n' +
 '**sao set [' + availablePlayerAttributes.join(', ') + ']** <value>  |  Sets the value for my own attribute\n' +
 '      If you choose to set your image you have to send it in the same message instead of a value.\n' +
+'**sao [guild, guilds]**  |  Lists all guilds currently registered\n' +
+'**sao [guild, guilds]** <Guildname or ID>  |  Asks for information about this guild\n' +
 '**sao rank**  |  Lists all players sorted by their level\n' +
 '**sao [time, timezone, timezones, utc]**  |  Get a map of the players\' timezones\n\n' +
 
@@ -420,9 +423,7 @@ sao_handleCmdPlayer = (message) => {
 				logger.info(connectionErr);
 				send(message, answer);
 			} else {
-				// logger.info('db connected');
 				const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE discord_id = \'' + player.id + '\';'
-				// logger.info(query);
 				db.query(query, (err, result) => {
 					if (err) {
 						logger.info('Error on querry!');
@@ -432,12 +433,6 @@ sao_handleCmdPlayer = (message) => {
 						answer = 'No info for player ***' + player.username + '*** found.';
 					} else {
 						const row = result.rows[0];
-						// logger.info('result:');
-						// logger.info(result);
-						/*answer = '**' + row.discord_name + '**\n';
-						if (row.sao_level) {
-							answer += '**Level: ' + row.sao_level + '**\n';
-						}*/
 						if (row.sao_id) {
 							answer = '**' + row.sao_id + '**';
 						} else if (row.sao_alt_id) {
@@ -445,12 +440,110 @@ sao_handleCmdPlayer = (message) => {
 						} else {
 							answer = '';
 						}
-						/*if (row.utc) {
-							answer += 'Timezone: UTC ' + (row.utc >= 0 ? '+' : '') + row.utc + '\n';
-						}*/
 						sao_createProfileCard(row).then((options) => {
 							send(message, answer, options);
 						});
+					}
+					db.end();
+				});
+			}
+        });
+	}
+};
+sao_handleCmdGuild = (message) => {
+    let args = message.content.substring(4).split(' ');
+	let guildIdOrName = args.splice(1, args.length - 1).join(' ');
+	logger.info('sao_handleCmdGuild for ' + guildIdOrName);
+	if (guildIdOrName === '') {
+		const db = getDbClient();
+		db.connect(connectionErr => {
+			if (connectionErr) {
+				answer = 'Sorry, I could not connect to the database.'
+				logger.info('Could not connect to database.');
+				logger.info(connectionErr);
+				send(message, answer);
+			} else {
+				const query = 'SELECT name FROM ' + TABLE_GUILDS + ';'
+				db.query(query, (err, result) => {
+					if (err) {
+						logger.info('Error on querry!');
+						logger.info(err);
+						answer = 'Error: No guilds found.';
+					} else if (result.rowCount === 0) {
+						answer = 'No guilds found.';
+					} else {
+						answer = 'List of all registered guilds:\n***' + result.rows.map(row => row.name.trim()).join('***, ***') + '***';
+					}
+					send(message, answer);
+					db.end();
+				});
+			}
+        });
+	} else {
+		let answer;
+		
+		const db = getDbClient();
+		db.connect(connectionErr => {
+			if (connectionErr) {
+				answer = 'Sorry, I could not connect to the database.';
+				logger.info('Could not connect to database.');
+				logger.info(connectionErr);
+				send(message, answer);
+			} else {
+				const query = 'SELECT * FROM ' + TABLE_GUILDS + ' WHERE id = ' + guildIdOrName + ' OR name = \'' + guildIdOrName + '\';'
+				db.query(query, (err, result) => {
+					if (err) {
+						logger.info('Error on querry!');
+						logger.info(err);
+						answer = 'Error: No info for guild ***' + guildIdOrName + '*** found.';
+					} else if (result.rowCount === 0) {
+						answer = 'No info for guild ***' + guildIdOrName + '*** found.';
+					} else {
+						const row = result.rows[0];
+						answer = '';
+						if (row.name) {
+							answer = '**' + row.name + '** ';
+						}
+						if (row.id) {
+							answer += '**' + row.id + '** ';
+						}
+						if (row.leader_id) {
+							answer += '\nLeader: ';
+							const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_id = ' + row.leader_id + ' OR sao_alt_id = ' + row.leader_id + ';'
+								db.query(query, (err, leaderResult) => {
+									if (err) {
+										logger.info('Error on querry!');
+										logger.info(err);
+									} else if (leaderResult.rowCount === 0) {
+										logger.info('Search Guild Leader: No info for player with id ' + row.leader_id + ' found!');
+									} else {
+										const leaderRow = leaderResult.rows[0];
+										if (leaderRow.discord_name) {
+											answer += '**' + leaderRow.discord_name + '** ';
+										}
+									}
+								});
+							answer += '(**' +row.leader_id + '**)';
+						}
+						if (row.subleader_id) {
+							answer += '\nSub-Leader: ';
+							const query = 'SELECT * FROM ' + TABLE_PLAYERS + ' WHERE sao_id = ' + row.subleader_id + ' OR sao_alt_id = ' + row.subleader_id + ';'
+								db.query(query, (err, subleaderResult) => {
+									if (err) {
+										logger.info('Error on querry!');
+										logger.info(err);
+									} else if (subleaderResult.rowCount === 0) {
+										logger.info('Search Guild Sub-Leader: No info for player with id ' + row.subleader_id + ' found!');
+									} else {
+										const subleaderRow = subleaderResult.rows[0];
+										if (subleaderRow.discord_name) {
+											answer += '**' + subleaderRow.discord_name + '** ';
+										}
+									}
+								});
+							answer += '(**' +row.subleader_id + '**)';
+						}
+						send(message, answer);
 					}
 					db.end();
 				});
@@ -954,6 +1047,10 @@ const sao = (controller, message) => {
 		case 'players':
 		case 'info':
 			sao_handleCmdPlayer(message);
+			break;
+		case 'guild':
+		case 'guilds':
+			sao_handleCmdGuild(message);
 			break;
 		case 'rank':
 		case 'ranking':
