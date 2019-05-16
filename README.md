@@ -39,7 +39,9 @@ Notice: When using a command do not include "<" and ">".
 
 ## Examples
 ### Profile Card
-![Profile Card BadToxic](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/card-BadToxic%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20.png?raw=true)
+![Profile Card BadToxic](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/card-BadToxic.png?raw=true)
+Also animated cards are possible:
+![Animated Profile Card BadToxic](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/card-BadToxic.gif)
 
 ### Ranking List
 ![Ranking List](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/rank-list.png?raw=true)
@@ -52,6 +54,17 @@ Notice: When using a command do not include "<" and ">".
 
 ### Guild Information
 ![Guild Information](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/guild%20info%20example.png?raw=true)
+
+## Need support?
+Join my discord server: https://discord.gg/8QMCm2d
+
+# Support me
+with donations, likes and follows:
+[Patreon](https://www.patreon.com/badtoxic)
+[Instagram](https://www.instagram.com/xybadtoxic)
+[Twitter](https://twitter.com/BadToxic)
+[YouTube](https://www.youtube.com/user/BadToxic)
+[Twitch](https://www.twitch.tv/xybadtoxic)
 
 ## Documentation
 
