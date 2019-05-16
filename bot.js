@@ -4,6 +4,7 @@ const auth = require('./auth.json');
 const fs = require("fs");
 const {Client} = require('pg');
 const Jimp = require('jimp');
+const { BitmapImage, GifFrame, GifUtil } = require('gifwrap');
 // let XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 // let $ = require('jquery');
 
@@ -334,6 +335,9 @@ bot.on('message', (message) => {
 	controller = {
 		logger: logger,
 		Jimp: Jimp,
+		BitmapImage: BitmapImage,
+		GifFrame: GifFrame,
+		GifUtil: GifUtil,
 		send: send,
 		getUserAvatarUrls: getUserAvatarUrls,
 		sendRandomFile: sendRandomFile,

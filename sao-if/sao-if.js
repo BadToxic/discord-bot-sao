@@ -1,6 +1,9 @@
 // Must be set from outside
 let logger;
 let Jimp;
+let BitmapImage;
+let GifFrame;
+let GifUtil;
 let send;
 let getUserAvatarUrls;
 let sendRandomFile;
@@ -366,7 +369,6 @@ sao_createProfileCard = (row) => {
 					const cardPath = sao_imgPath + 'card-' + row.discord_name + (useGif ? '.gif' : '.png');
 					if (useGif) {
 						
-						const { BitmapImage, GifFrame, GifUtil } = require('gifwrap');
 						const frames = [];
 						// frame = new GifFrame(cardWidth, cardHeight, { delayCentisecs: 10 });
 						
@@ -1057,6 +1059,9 @@ sao_handleCmdSpank = (message) => {
 sao_init = (controller) => {
 	logger = controller.logger;
 	Jimp = controller.Jimp;
+	BitmapImage = controller.BitmapImage;
+	GifFrame = controller.GifFrame;
+	GifUtil = controller.GifUtil;
 	send = controller.send;
 	getUserAvatarUrls = controller.getUserAvatarUrls;
 	sendRandomFile = controller.sendRandomFile;
