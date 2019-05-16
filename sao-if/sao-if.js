@@ -372,11 +372,11 @@ sao_createProfileCard = (row) => {
 						const frames = [];
 						// frame = new GifFrame(cardWidth, cardHeight, { delayCentisecs: 10 });
 						
-						frames.push(new GifFrame(new BitmapImage(card))); // Add the single frame card to gif
+						frames.push(new GifFrame(new BitmapImage(card.bitmap))); // Add the single frame card to gif
 						while (iconPromiseIndex < values.length) {
 							// Add further frames with the card overwritten by the next image
 							blitAvatar(card, values[iconPromiseIndex++], avatarHeight, topHeight);
-							frames.push(new GifFrame(new BitmapImage(card)));
+							frames.push(new GifFrame(new BitmapImage(card.bitmap)));
 						}
 						
 						GifUtil.write(cardPath, frames, { loops: 0 }).then(gif => {
