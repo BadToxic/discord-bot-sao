@@ -374,7 +374,7 @@ sao_createProfileCard = (row) => {
 						
 						let gifBitmap = new BitmapImage(card.bitmap);
 						GifUtil.quantizeDekker(gifBitmap, 256);
-						frames.push(new GifFrame(gifBitmap, { delayCentisecs: 15 })); // Add the single frame card to gif
+						frames.push(new GifFrame(gifBitmap, { delayCentisecs: 25 })); // Add the single frame card to gif
 						while (iconPromiseIndex < values.length) {
 							// Add further frames with the card overwritten by the next image
 							blitAvatar(card, values[iconPromiseIndex++], avatarHeight, topHeight);
@@ -383,7 +383,7 @@ sao_createProfileCard = (row) => {
 							frames.push(new GifFrame(gifBitmap));
 						}
 						
-						GifUtil.write(cardPath, frames, { loops: 0 }).then(gif => {
+						GifUtil.write(cardPath, frames.concat(frames.reverse()), { loops: 0 }).then(gif => {
 							resolve({files: [cardPath]});
 						});
 					} else {
