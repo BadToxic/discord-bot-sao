@@ -203,6 +203,18 @@ sao_handleCmdItem = (message) => {
 	send(message, answer, options);
 };
 
+blitAvatar = (card, avatar, avatarHeight, topHeight) => {
+	avatar.resize(Jimp.AUTO, avatarHeight);
+	let xAvatar = 0;
+	let yAvatar = topHeight;
+	if (avatar.bitmap.width < 140) {
+		xAvatar = 70 - avatar.bitmap.width / 2;
+	} else if (avatar.bitmap.width > 206) {
+		avatar.resize(206, Jimp.AUTO);
+		// yAvatar += (avatarHeight - avatar.bitmap.height) / 2;
+	}
+	card.blit(avatar, xAvatar, yAvatar);
+};
 sao_createProfileCard = (row) => {
 	return new Promise(function(resolve, reject) {
 		let topPromise = Jimp.read(sao_imgPath + 'profile/profile-top.png');             // 498 x 88
@@ -230,9 +242,11 @@ sao_createProfileCard = (row) => {
 		}
 			
 		if (row.sao_image) {
-			promises.push(Jimp.read(row.sao_image));
+			row.sao_image.split(',').forEach((saoImageUrl) => {
+				promises.push(Jimp.read(saoImageUrl));
+			});
 		}
-			
+		
 		Promise.all(promises).then((values) => {
 			
 			let topHeight = 88;
@@ -259,12 +273,13 @@ sao_createProfileCard = (row) => {
 			}
 			
 			const totalRowHeight = rowNumber * rowHeight;
+			let cardWidth = 498;
 			let cardHeight = topHeight + bottomHeight + totalRowHeight;
 			if (cardHeight < 284) {
 				cardHeight = 284;
 			}
 			
-			new Jimp(498, cardHeight, (err, card) => {
+			new Jimp(cardWidth, cardHeight, (err, card) => {
 			    if (err) {
 					logger.info('Could not create card image');
 					cancelCard();
@@ -333,30 +348,42 @@ sao_createProfileCard = (row) => {
 						createRow(values[iconPromiseIndex++], '2nd Guild: ' + row.sao_alt_guild);
 					}
 					if (row.utc || row.utc === 0) {
-						createRow(values[iconPromiseIndex], 'Timezone: UTC ' + (row.utc > 0 ? '+' : '') + row.utc);
+						createRow(values[iconPromiseIndex++], 'Timezone: UTC ' + (row.utc > 0 ? '+' : '') + row.utc);
 					}
 					
 					// Add avatar
+					let useGif = false;
+					let avatarHeight;
 					if (row.sao_image) {
-						let avatar = values[values.length - 1];
-						let avatarHeight = cardHeight - topHeight - bottomHeight;
-						avatar.resize(Jimp.AUTO, avatarHeight);
-						let xAvatar = 0;
-						let yAvatar = topHeight;
-						if (avatar.bitmap.width < 140) {
-							xAvatar = 70 - avatar.bitmap.width / 2;
-						} else if (avatar.bitmap.width > 206) {
-							avatar.resize(206, Jimp.AUTO);
-							// yAvatar += (avatarHeight - avatar.bitmap.height) / 2;
-						}
-						card.blit(avatar, xAvatar, yAvatar);
+						avatarHeight = cardHeight - topHeight - bottomHeight;
+						
+						blitAvatar(card, values[iconPromiseIndex++], avatarHeight, topHeight);
+						
+						useGif = iconPromiseIndex < values.length;
 					}
 		
 					// Save on server
-					const cardPath = sao_imgPath + 'card-' + row.discord_name + '.png';
-					card.write(cardPath);
-					
-					resolve({files: [cardPath]});
+					const cardPath = sao_imgPath + 'card-' + row.discord_name + (useGif ? '.gif' : '.png');
+					if (useGif) {
+						
+						const { BitmapImage, GifFrame, GifUtil } = require('gifwrap');
+						const frames = [];
+						// frame = new GifFrame(cardWidth, cardHeight, { delayCentisecs: 10 });
+						
+						frames.push(new GifFrame(new BitmapImage(card))); // Add the single frame card to gif
+						while (iconPromiseIndex < values.length) {
+							// Add further frames with the card overwritten by the next image
+							blitAvatar(card, values[iconPromiseIndex++], avatarHeight, topHeight);
+							frames.push(new GifFrame(new BitmapImage(card)));
+						}
+						
+						GifUtil.write(cardPath, frames, { loops: 0 }).then(gif => {
+							resolve({files: [cardPath]});
+						});
+					} else {
+						card.write(cardPath);
+						resolve({files: [cardPath]});
+					}
 				}
 			});
 		}).catch(err => {
