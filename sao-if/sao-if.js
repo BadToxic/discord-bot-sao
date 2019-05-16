@@ -383,7 +383,7 @@ sao_createProfileCard = (row) => {
 							frames.push(new GifFrame(gifBitmap));
 						}
 						
-						GifUtil.write(cardPath, frames.concat(frames.reverse()), { loops: 0 }).then(gif => {
+						GifUtil.write(cardPath, frames.concat(frames.slice().reverse()), { loops: 0 }).then(gif => {
 							resolve({files: [cardPath]});
 						});
 					} else {
