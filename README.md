@@ -40,7 +40,9 @@ Notice: When using a command do not include "<" and ">".
 ## Examples
 ### Profile Card
 ![Profile Card BadToxic](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/card-BadToxic.png?raw=true)
+
 Also animated cards are possible:
+
 ![Animated Profile Card BadToxic](https://github.com/BadToxic/discord-bot-sao/blob/master/sao-if/img/card-BadToxic.gif)
 
 ### Ranking List
