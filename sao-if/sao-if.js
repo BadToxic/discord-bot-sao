@@ -26,7 +26,7 @@ const mocks = require('./data/mocks.json');
 const TABLE_PLAYERS = 'saoifplayers';
 const TABLE_GUILDS = 'saoifguilds';
 const sao_imgPath = './sao-if/img/';
-const sao_maxLevel = 100; 		// The highest level a player can reach
+const sao_maxLevel = 150; 		// The highest level a player can reach
 
 const useMock = false;
 
