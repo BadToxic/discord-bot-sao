@@ -63,7 +63,8 @@ const help =
 
 '***For Fun***\n' +
 '**sao [meme, memes]**  |  Get a random SAO meme\n' +
-'**sao [girl, girls]**  |  Get a random SAO girl';
+'**sao [girl, girls]**  |  Get a random SAO girl\n' +
+'**sao [boy, boys]**  |  Get a random SAO boy';
 
 sao_getBosses = () => {
 	let bosses = {};
@@ -983,6 +984,9 @@ sao_handleCmdMeme = (message) => {
 sao_handleCmdGirl = (message) => {
 	sendRandomFile(message, sao_imgPath + 'girls/');
 };
+sao_handleCmdBoy = (message) => {
+	sendRandomFile(message, sao_imgPath + 'boys/');
+};
 
 
 sao_handleCmdSpank = (message) => {
@@ -1142,6 +1146,10 @@ const sao = (controller, message) => {
 		case 'girl':
 		case 'girls':
 			sao_handleCmdGirl(message);
+			break;
+		case 'boy':
+		case 'boys':
+			sao_handleCmdBoy(message);
 			break;
 		case 'utc':
 		case 'time':
